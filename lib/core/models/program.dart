@@ -6,7 +6,13 @@ class Program {
   String? description;
   String? image;
   ProgramCategory? programCategory;
+  bool? isActive;
 
   Program(
-      {this.id, this.name, this.description, this.image, this.programCategory});
+      {this.id,
+      this.name,
+      this.description,
+      this.image,
+      this.programCategory,
+      this.isActive});
 }

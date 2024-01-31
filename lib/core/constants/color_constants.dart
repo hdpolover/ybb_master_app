@@ -1,5 +1,6 @@
-// primary color constant blue
 import 'package:flutter/material.dart';
 
+class AppColorConstants {
 // convert this #00B0FF to color
-Color kPrimaryColor = const Color(0xFF00B0FF);
+  static const Color kPrimaryColor = Color(0xFF00B0FF);
+}
