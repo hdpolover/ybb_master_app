@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ybb_master_app/core/constants/color_constants.dart';
 import 'package:ybb_master_app/core/constants/size_constants.dart';
 import 'package:ybb_master_app/core/constants/text_style_constants.dart';
-import 'package:ybb_master_app/core/widgets/common_app_bar.dart';
+import 'package:ybb_master_app/core/widgets/common_admin_top_app_bar.dart';
 
 class EditProgram extends StatefulWidget {
   const EditProgram({super.key});

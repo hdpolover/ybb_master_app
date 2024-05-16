@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ybb_master_app/core/constants/color_constants.dart';
 import 'package:ybb_master_app/core/constants/size_constants.dart';
 import 'package:ybb_master_app/core/constants/text_style_constants.dart';
-import 'package:ybb_master_app/core/widgets/common_app_bar.dart';
+import 'package:ybb_master_app/core/widgets/common_admin_top_app_bar.dart';
 
 class AddProgram extends StatefulWidget {
   const AddProgram({super.key});
@@ -29,7 +29,7 @@ class _AddProgramState extends State<AddProgram> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: CommonAppBar(
+      appBar: CommonAdminTopAppBar(
         height:
             MediaQuery.of(context).size.height * AppSizeConstants.appBarHeight,
       ),

@@ -1,5 +1,6 @@
 import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
+import 'package:ybb_master_app/core/widgets/common_app_bar.dart';
 
 class ParticipantsPage extends StatefulWidget {
   const ParticipantsPage({super.key});
@@ -13,11 +14,7 @@ class _ParticipantsPageState extends State<ParticipantsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[100],
-      appBar: AppBar(
-        title: const Text("Participants"),
-        surfaceTintColor: Colors.white,
-        backgroundColor: Colors.white,
-      ),
+      appBar: const CommonAppBar(title: "Participants"),
       body: SingleChildScrollView(
         child: Column(
           children: [

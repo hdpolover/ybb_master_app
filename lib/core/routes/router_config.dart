@@ -1,11 +1,17 @@
 // private navigators
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:ybb_master_app/core/models/full_payment_model.dart';
 import 'package:ybb_master_app/core/routes/route_constants.dart';
 import 'package:ybb_master_app/main.dart';
 import 'package:ybb_master_app/screens/auth/auth.dart';
 import 'package:ybb_master_app/screens/base/base_nav.dart';
 import 'package:ybb_master_app/screens/dashboard/dashboard.dart';
+import 'package:ybb_master_app/screens/master_settings/master_program_categories.dart';
+import 'package:ybb_master_app/screens/master_settings/master_programs.dart';
+import 'package:ybb_master_app/screens/master_settings/master_settings.dart';
+import 'package:ybb_master_app/screens/payments/payment_detail.dart';
+import 'package:ybb_master_app/screens/payments/payments.dart';
 import 'package:ybb_master_app/screens/program_management/add_program/add_program.dart';
 import 'package:ybb_master_app/screens/program_management/edit_program/edit_program.dart';
 import 'package:ybb_master_app/screens/users/participants/participants_page.dart';
@@ -20,10 +26,12 @@ final _shellNavigatorPaymentsKey =
     GlobalKey<NavigatorState>(debugLabel: 'payments');
 final _shellNavigatorSettingsKey =
     GlobalKey<NavigatorState>(debugLabel: 'settings');
+final _shellNavigatorMasterSettingsKey =
+    GlobalKey<NavigatorState>(debugLabel: 'master-settings');
 
 class AppRouteConfig {
   static final GoRouter route = GoRouter(
-    initialLocation: '/',
+    initialLocation: AppRouteConstants.authRoutePath,
     // * Passing a navigatorKey causes an issue on hot reload:
     // * https://github.com/flutter/flutter/issues/113757#issuecomment-1518421380
     // * However it's still necessary otherwise the navigator pops back to
@@ -99,14 +107,16 @@ class AppRouteConfig {
                 name: AppRouteConstants.paymentsRouteName,
                 path: AppRouteConstants.paymentsRoutePath,
                 pageBuilder: (context, state) => const NoTransitionPage(
-                  child:
-                      RootScreen(label: 'B', detailsPath: '/payments/details'),
+                  child: Payments(),
                 ),
                 routes: [
                   GoRoute(
                     path: 'details',
-                    pageBuilder: (context, state) => const NoTransitionPage(
-                        child: DetailsScreen(label: 'B')),
+                    pageBuilder: (context, state) => NoTransitionPage(
+                      child: PaymentDetail(
+                        payment: state.extra as FullPaymentModel,
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -122,6 +132,32 @@ class AppRouteConfig {
                   child: EditProgram(),
                 ),
                 routes: [],
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            navigatorKey: _shellNavigatorMasterSettingsKey,
+            routes: [
+              GoRoute(
+                name: AppRouteConstants.masterSettingsRouteName,
+                path: AppRouteConstants.masterSettingsRoutePath,
+                pageBuilder: (context, state) => const NoTransitionPage(
+                  child: MasterSettings(),
+                ),
+                routes: [
+                  GoRoute(
+                    name: AppRouteConstants.masterProgramsRouteName,
+                    path: AppRouteConstants.masterProgramsRoutePath,
+                    pageBuilder: (context, state) =>
+                        const NoTransitionPage(child: MasterPrograms()),
+                  ),
+                  GoRoute(
+                    name: AppRouteConstants.masterProgramCategoriesRouteName,
+                    path: AppRouteConstants.masterProgramCategoriesRoutePath,
+                    pageBuilder: (context, state) => const NoTransitionPage(
+                        child: MasterProgramCategories()),
+                  ),
+                ],
               ),
             ],
           ),

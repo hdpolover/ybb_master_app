@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:ybb_master_app/core/models/program.dart';
+import 'package:provider/provider.dart';
+import 'package:ybb_master_app/core/models/program/program_model.dart';
+import 'package:ybb_master_app/providers/program_provider.dart';
 
 class ProgramTile extends StatelessWidget {
-  final Program program;
+  final ProgramModel program;
   const ProgramTile({required this.program, super.key});
 
   _getStatusChip() {
     return Chip(
-      label: Text(program.isActive! ? "Active" : "Inactive"),
-      backgroundColor: program.isActive! ? Colors.green : Colors.red,
+      label: Text(program.isActive == "1" ? "Active" : "Inactive"),
+      backgroundColor: program.isActive == "1" ? Colors.green : Colors.red,
       labelStyle: const TextStyle(color: Colors.white),
       side: BorderSide.none,
     );
@@ -19,7 +21,10 @@ class ProgramTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        context.go('/dashboard');
+        Provider.of<ProgramProvider>(context, listen: false).currentProgram =
+            program;
+
+        context.push('/dashboard');
       },
       child: Card(
         margin: const EdgeInsets.symmetric(vertical: 10),
@@ -29,9 +34,12 @@ class ProgramTile extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Image.network(
-                program.image!,
-                width: 100,
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Image.network(
+                  program.logoUrl ?? "",
+                  width: MediaQuery.of(context).size.width * 0.1,
+                ),
               ),
               Expanded(
                 child: Padding(
@@ -43,9 +51,12 @@ class ProgramTile extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(program.name!,
-                              style:
-                                  Theme.of(context).textTheme.headlineSmall!),
+                          Expanded(
+                            child: Text(program.name!,
+                                softWrap: true,
+                                style:
+                                    Theme.of(context).textTheme.headlineSmall!),
+                          ),
                           _getStatusChip(),
                         ],
                       ),

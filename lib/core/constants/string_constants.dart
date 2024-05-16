@@ -1,4 +1,5 @@
 class AppStringConstants {
+  static const String apiUrl = "https://master-api.ybbfoundation.com";
   static const String APP_NAME = "Flutter Starter";
   static const String APP_VERSION = "1.0.0";
   static const String APP_DESCRIPTION =
