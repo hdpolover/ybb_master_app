@@ -19,6 +19,7 @@ class FullPaymentModel {
   dynamic proofUrl;
   String? accountName;
   String? amount;
+  dynamic currency;
   String? sourceName;
   String? isActive;
   String? isDeleted;
@@ -27,6 +28,7 @@ class FullPaymentModel {
   String? fullName;
   String? phoneNumber;
   String? email;
+  String? programId;
   String? programPaymentsName;
   String? description;
   DateTime? startDate;
@@ -38,6 +40,10 @@ class FullPaymentModel {
   String? paymentMethodsName;
   String? type;
   String? imgUrl;
+  String? externalId;
+  String? xenditStatus;
+  dynamic xenditPaymentMethod;
+  String? nationality;
 
   FullPaymentModel({
     this.id,
@@ -48,6 +54,7 @@ class FullPaymentModel {
     this.proofUrl,
     this.accountName,
     this.amount,
+    this.currency,
     this.sourceName,
     this.isActive,
     this.isDeleted,
@@ -56,6 +63,7 @@ class FullPaymentModel {
     this.fullName,
     this.phoneNumber,
     this.email,
+    this.programId,
     this.programPaymentsName,
     this.description,
     this.startDate,
@@ -67,6 +75,10 @@ class FullPaymentModel {
     this.paymentMethodsName,
     this.type,
     this.imgUrl,
+    this.externalId,
+    this.xenditStatus,
+    this.xenditPaymentMethod,
+    this.nationality,
   });
 
   factory FullPaymentModel.fromJson(Map<String, dynamic> json) =>
@@ -79,6 +91,7 @@ class FullPaymentModel {
         proofUrl: json["proof_url"],
         accountName: json["account_name"],
         amount: json["amount"],
+        currency: json["currency"],
         sourceName: json["source_name"],
         isActive: json["is_active"],
         isDeleted: json["is_deleted"],
@@ -91,6 +104,7 @@ class FullPaymentModel {
         fullName: json["full_name"],
         phoneNumber: json["phone_number"],
         email: json["email"],
+        programId: json["program_id"],
         programPaymentsName: json["program_payments_name"],
         description: json["description"],
         startDate: json["start_date"] == null
@@ -105,6 +119,10 @@ class FullPaymentModel {
         paymentMethodsName: json["payment_methods_name"],
         type: json["type"],
         imgUrl: json["img_url"],
+        externalId: json["external_id"],
+        xenditStatus: json["xendit_status"],
+        xenditPaymentMethod: json["xendit_payment_method"],
+        nationality: json["nationality"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -116,6 +134,7 @@ class FullPaymentModel {
         "proof_url": proofUrl,
         "account_name": accountName,
         "amount": amount,
+        "currency": currency,
         "source_name": sourceName,
         "is_active": isActive,
         "is_deleted": isDeleted,
@@ -124,6 +143,7 @@ class FullPaymentModel {
         "full_name": fullName,
         "phone_number": phoneNumber,
         "email": email,
+        "program_id": programId,
         "program_payments_name": programPaymentsName,
         "description": description,
         "start_date": startDate?.toIso8601String(),
@@ -135,5 +155,8 @@ class FullPaymentModel {
         "payment_methods_name": paymentMethodsName,
         "type": type,
         "img_url": imgUrl,
+        "external_id": externalId,
+        "xendit_status": xenditStatus,
+        "xendit_payment_method": xenditPaymentMethod,
       };
 }

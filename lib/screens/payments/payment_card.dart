@@ -4,11 +4,18 @@ import 'package:intl/intl.dart';
 import 'package:ybb_master_app/core/constants/text_style_constants.dart';
 import 'package:ybb_master_app/core/models/full_payment_model.dart';
 import 'package:ybb_master_app/core/routes/route_constants.dart';
+import 'package:ybb_master_app/core/widgets/common_widgets.dart';
 
-class PaymentCard extends StatelessWidget {
+class PaymentCard extends StatefulWidget {
   final FullPaymentModel payment;
+
   const PaymentCard({super.key, required this.payment});
 
+  @override
+  State<PaymentCard> createState() => _PaymentCardState();
+}
+
+class _PaymentCardState extends State<PaymentCard> {
   buildChip(String status) {
     Color color = Colors.grey;
     String text = "";
@@ -45,7 +52,20 @@ class PaymentCard extends StatelessWidget {
   Widget build(BuildContext context) {
     // format date to be like "April 14, 2024 10:00:00"
     String paymentDate =
-        DateFormat('MMM dd, yyyy HH:mm').format(payment.createdAt!);
+        DateFormat('MMM dd, yyyy HH:mm').format(widget.payment.createdAt!);
+
+    String titleText = (widget.payment.email == null ||
+            widget.payment.fullName == null)
+        ? "-"
+        : "${widget.payment.fullName} (${widget.payment.email}) [${widget.payment.nationality == null ? "Undefined Nationality" : widget.payment.nationality!.toUpperCase()}]";
+
+    String paymentTypeName = widget.payment.programPaymentsName == null
+        ? "-"
+        : "${widget.payment.programPaymentsName}";
+
+    String paymentMethodName = widget.payment.paymentMethodsName == null
+        ? "-"
+        : "${widget.payment.paymentMethodsName}";
 
     return Card(
       surfaceTintColor: Colors.white,
@@ -58,15 +78,41 @@ class PaymentCard extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
         ),
-        leading: buildChip(payment.status!),
-        title: Text(payment.email!,
+        leading: buildChip(widget.payment.status ?? "0"),
+        title: Text(titleText,
             style: AppTextStyleConstants.bodyTextStyle
                 .copyWith(fontWeight: FontWeight.bold)),
-        subtitle: Text(payment.paymentMethodsName!),
+        subtitle: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 5),
+            Text(
+              paymentTypeName,
+              style: AppTextStyleConstants.bodyTextStyle.copyWith(
+                color: Colors.grey,
+              ),
+            ),
+            const SizedBox(height: 5),
+            Text(
+              paymentMethodName,
+              style: AppTextStyleConstants.bodyTextStyle.copyWith(
+                color: Colors.grey,
+              ),
+            ),
+            const SizedBox(height: 5),
+            widget.payment.externalId == null
+                ? const SizedBox.shrink()
+                : CommonWidgets().buildCopyableTextItem(
+                    widget.payment.externalId ?? "-",
+                    context,
+                  )
+          ],
+        ),
         trailing: Text(paymentDate),
         onTap: () {
           context.push(AppRouteConstants.paymentsDetailsRoutePath,
-              extra: payment);
+              extra: widget.payment);
         },
       ),
     );

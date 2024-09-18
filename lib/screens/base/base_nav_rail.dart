@@ -61,6 +61,11 @@ class ScaffoldWithNavigationRail extends StatelessWidget {
                 ),
                 NavigationRailDestination(
                   padding: EdgeInsets.symmetric(vertical: 5),
+                  label: Text('Announcements'),
+                  icon: FaIcon(FontAwesomeIcons.bullhorn),
+                ),
+                NavigationRailDestination(
+                  padding: EdgeInsets.symmetric(vertical: 5),
                   label: Text('Settings'),
                   icon: FaIcon(FontAwesomeIcons.gear),
                 ),

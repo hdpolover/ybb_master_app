@@ -1,12 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import 'package:ybb_master_app/core/constants/color_constants.dart';
 import 'package:ybb_master_app/core/models/program/program_model.dart';
 import 'package:ybb_master_app/core/models/program/program_category_model.dart';
-import 'package:ybb_master_app/core/routes/route_constants.dart';
-import 'package:ybb_master_app/core/widgets/common_app_bar.dart';
 import 'package:ybb_master_app/providers/program_provider.dart';
 import 'package:ybb_master_app/screens/welcome/components/program_tile.dart';
 
@@ -54,19 +49,12 @@ class ProgramSection extends StatelessWidget {
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ListView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: programCategories.length,
-            itemBuilder: (context, index) {
-              return buildProgramGroup(programCategories[index]);
-            },
-          )
-        ],
+      child: ListView.builder(
+        shrinkWrap: true,
+        itemCount: programCategories.length,
+        itemBuilder: (context, index) {
+          return buildProgramGroup(programCategories[index]);
+        },
       ),
     );
   }

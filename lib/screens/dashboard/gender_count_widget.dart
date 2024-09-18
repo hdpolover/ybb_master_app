@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:ybb_master_app/core/constants/text_style_constants.dart';
 import 'package:ybb_master_app/core/models/dashboard_gender_count_model.dart';
+import 'package:fl_chart/fl_chart.dart';
+import 'package:ybb_master_app/screens/dashboard/chart_indicator.dart';
 
 class GenderCountWidget extends StatefulWidget {
   final List<DashboardGenderCountModel> genderCount;
@@ -11,6 +13,98 @@ class GenderCountWidget extends StatefulWidget {
 }
 
 class _GenderCountWidgetState extends State<GenderCountWidget> {
+  int touchedIndex = -1;
+
+  List<PieChartSectionData> showingSections() {
+    // create list view builder
+    List<DashboardGenderCountModel> genderCount = widget.genderCount;
+
+    List<PieChartSectionData> data = [];
+
+    double percentage = 0.0;
+
+    for (int i = 0; i < genderCount.length; i++) {
+      final isTouched = i == touchedIndex;
+      final fontSize = isTouched ? 25.0 : 16.0;
+      final radius = isTouched ? 100.0 : 80.0;
+      const shadows = [Shadow(color: Colors.black, blurRadius: 2)];
+
+      double count = double.parse(
+          genderCount[i].jumlah.toString().replaceAll(RegExp(r'[^\w\s]+'), ''));
+
+      if (i == 0) {
+        percentage = count /
+            (count +
+                double.parse(genderCount[1]
+                    .jumlah
+                    .toString()
+                    .replaceAll(RegExp(r'[^\w\s]+'), '')));
+      } else {
+        percentage = count /
+            (count +
+                double.parse(genderCount[0]
+                    .jumlah
+                    .toString()
+                    .replaceAll(RegExp(r'[^\w\s]+'), '')));
+      }
+
+      // percentage + "%" + " (count)"
+      String titleText = "${(percentage * 100).toStringAsFixed(2)}%"
+          "\n(${genderCount[i].jumlah})";
+
+      data.add(PieChartSectionData(
+        color: i == 0 ? Colors.blue : Colors.pink,
+        value: percentage,
+        title: titleText,
+        radius: radius,
+        titleStyle: TextStyle(
+          fontSize: fontSize,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+          shadows: shadows,
+        ),
+      ));
+    }
+
+    return data;
+    // return List.generate(2, (i) {
+    //   final isTouched = i == touchedIndex;
+    //   final fontSize = isTouched ? 25.0 : 16.0;
+    //   final radius = isTouched ? 60.0 : 50.0;
+    //   const shadows = [Shadow(color: Colors.black, blurRadius: 2)];
+    //   switch (i) {
+    //     case 0:
+    //       return PieChartSectionData(
+    //         color: Colors.blue,
+    //         value: 40,
+    //         title: '40%',
+    //         radius: radius,
+    //         titleStyle: TextStyle(
+    //           fontSize: fontSize,
+    //           fontWeight: FontWeight.bold,
+    //           color: Colors.white,
+    //           shadows: shadows,
+    //         ),
+    //       );
+    //     case 1:
+    //       return PieChartSectionData(
+    //         color: Colors.pink,
+    //         value: 30,
+    //         title: '30%',
+    //         radius: radius,
+    //         titleStyle: TextStyle(
+    //           fontSize: fontSize,
+    //           fontWeight: FontWeight.bold,
+    //           color: Colors.white,
+    //           shadows: shadows,
+    //         ),
+    //       );
+    //     default:
+    //       throw Error();
+    //   }
+    // });
+  }
+
   buildItem(DashboardGenderCountModel item) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 10),
@@ -45,10 +139,73 @@ class _GenderCountWidgetState extends State<GenderCountWidget> {
     );
   }
 
+  buildChart() {
+    return AspectRatio(
+      aspectRatio: 1.3,
+      child: Row(
+        children: <Widget>[
+          Expanded(
+            child: AspectRatio(
+              aspectRatio: 1,
+              child: PieChart(
+                PieChartData(
+                  pieTouchData: PieTouchData(
+                    touchCallback: (FlTouchEvent event, pieTouchResponse) {
+                      setState(() {
+                        if (!event.isInterestedForInteractions ||
+                            pieTouchResponse == null ||
+                            pieTouchResponse.touchedSection == null) {
+                          touchedIndex = -1;
+                          return;
+                        }
+                        touchedIndex = pieTouchResponse
+                            .touchedSection!.touchedSectionIndex;
+                      });
+                    },
+                  ),
+                  borderData: FlBorderData(
+                    show: false,
+                  ),
+                  sectionsSpace: 0,
+                  centerSpaceRadius: 20,
+                  sections: showingSections(),
+                ),
+              ),
+            ),
+          ),
+          const Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              ChartIndicator(
+                color: Colors.blue,
+                text: 'Male',
+                isSquare: true,
+              ),
+              SizedBox(
+                height: 4,
+              ),
+              ChartIndicator(
+                color: Colors.pink,
+                text: 'Female',
+                isSquare: true,
+              ),
+              SizedBox(
+                height: 10,
+              ),
+            ],
+          ),
+          const SizedBox(
+            width: 28,
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.4,
       width: MediaQuery.of(context).size.width * 0.4,
       child: Card(
         shape: RoundedRectangleBorder(
@@ -70,14 +227,7 @@ class _GenderCountWidgetState extends State<GenderCountWidget> {
                 ),
               ),
               const SizedBox(height: 20),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  buildItem(widget.genderCount[0]),
-                  buildItem(widget.genderCount[1]),
-                ],
-              ),
+              buildChart(),
               const SizedBox(height: 20),
               const Text(
                 "Keep in mind that MALE is the default value when participants first registered. This data is not entirely accurate.",

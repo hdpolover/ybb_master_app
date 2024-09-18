@@ -4,8 +4,12 @@ import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:ybb_master_app/core/routes/router_config.dart';
 import 'package:ybb_master_app/providers/admin_provider.dart';
+import 'package:ybb_master_app/providers/ambassador_provider.dart';
 import 'package:ybb_master_app/providers/dashboard_provider.dart';
+import 'package:ybb_master_app/providers/faq_provider.dart';
+import 'package:ybb_master_app/providers/participant_provider.dart';
 import 'package:ybb_master_app/providers/payment_provider.dart';
+import 'package:ybb_master_app/providers/program_announcement_provider.dart';
 import 'package:ybb_master_app/providers/program_provider.dart';
 
 class MyApp extends StatelessWidget {
@@ -26,6 +30,18 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider<DashboardProvider>(
           create: (context) => DashboardProvider(),
+        ),
+        ChangeNotifierProvider<ParticipantProvider>(
+          create: (context) => ParticipantProvider(),
+        ),
+        ChangeNotifierProvider<AmbassadorProvider>(
+          create: (context) => AmbassadorProvider(),
+        ),
+        ChangeNotifierProvider<ProgramAnnouncementProvider>(
+          create: (context) => ProgramAnnouncementProvider(),
+        ),
+        ChangeNotifierProvider<FaqProvider>(
+          create: (context) => FaqProvider(),
         ),
       ],
       child: ResponsiveSizer(builder: (context, orientation, screenType) {

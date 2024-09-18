@@ -94,9 +94,9 @@ class _AuthState extends State<Auth> {
         // show a welcome image
         SizedBox(
           width: MediaQuery.of(context).size.width * 0.5,
-          child: Image.network(
-            'https://c.pxhere.com/photos/f8/ad/meeting_conference_seminar_event-725049.jpg!d',
-            fit: BoxFit.fill,
+          child: Image.asset(
+            'assets/images/ybb_full_logo.png',
+            width: MediaQuery.of(context).size.width * 0.5,
           ),
         ),
         SizedBox(
@@ -107,12 +107,6 @@ class _AuthState extends State<Auth> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // image of the logo from the assets
-                Image.asset(
-                  'assets/images/ybb_full_logo.png',
-                  width: MediaQuery.of(context).size.width * 0.2,
-                ),
-                const SizedBox(height: 30),
                 // create a text with the text "Sign in" using the text widget and style it with a font size of 30 and bold
                 Text(
                   'Welcome back!',
@@ -130,7 +124,7 @@ class _AuthState extends State<Auth> {
                           controller: emailController,
                           keyboardType: TextInputType.emailAddress,
                           // add a decoration to the text field with a border and a label
-                          decoration: InputDecoration(
+                          decoration: const InputDecoration(
                             labelText: 'Email',
                             border: OutlineInputBorder(),
                             hintText: 'Enter your email',
@@ -143,7 +137,7 @@ class _AuthState extends State<Auth> {
                           obscureText: true,
                           keyboardType: TextInputType.visiblePassword,
                           // add a decoration to the text field with a border and a label
-                          decoration: InputDecoration(
+                          decoration: const InputDecoration(
                             labelText: 'Password',
                             border: OutlineInputBorder(),
                             hintText: 'Enter your password',

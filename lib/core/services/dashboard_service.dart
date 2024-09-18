@@ -10,9 +10,12 @@ import 'package:ybb_master_app/core/models/dashboard_user_count_model.dart';
 class DashboardService {
   String dashboardUrl = '${AppStringConstants.apiUrl}/dashboard_admin';
 
-  Future<List<DashboardNationalityCountModel>> getNationalities() async {
-    var url = Uri.parse('$dashboardUrl/participant_country_count');
+  Future<List<DashboardNationalityCountModel>> getNationalities(
+      String id) async {
+    var url =
+        Uri.parse('$dashboardUrl/participant_country_count?program_id=$id');
 
+    print(url);
     try {
       var response = await http.get(url);
 
@@ -34,8 +37,10 @@ class DashboardService {
     }
   }
 
-  Future<List<DashboardUserCountModel>> getUserCountByDay() async {
-    var url = Uri.parse('$dashboardUrl/user_count_by_day');
+  Future<List<DashboardUserCountModel>> getUserCountByDay(String id) async {
+    var url = Uri.parse('$dashboardUrl/user_count_by_day?program_id=$id');
+
+    print(url);
 
     try {
       var response = await http.get(url);
@@ -58,8 +63,10 @@ class DashboardService {
     }
   }
 
-  Future<List<DashboardGenderCountModel>> getGenderCount() async {
-    var url = Uri.parse('$dashboardUrl/participant_stats?param=gender');
+  Future<List<DashboardGenderCountModel>> getGenderCount(
+      String programId) async {
+    var url = Uri.parse(
+        '$dashboardUrl/participant_stats?param=gender&program_id=$programId');
 
     try {
       var response = await http.get(url);

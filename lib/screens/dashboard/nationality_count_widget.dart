@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:data_table_2/data_table_2.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:ybb_master_app/core/models/dashboad_nationality_count_model.dart';
@@ -121,7 +122,6 @@ class NationalityCountWidgetState extends State<NationalityCountWidget> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.4,
       width: MediaQuery.of(context).size.width * 0.4,
       child: Card(
         shape: RoundedRectangleBorder(
@@ -153,19 +153,49 @@ class NationalityCountWidgetState extends State<NationalityCountWidget> {
               ),
               const SizedBox(height: 10),
               // make a grid view
-              Expanded(
-                child: GridView.builder(
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 5,
-                    childAspectRatio: 2,
-                    crossAxisSpacing: 8,
-                    mainAxisSpacing: 8,
-                  ),
-                  itemCount: items.length,
-                  itemBuilder: (context, index) {
-                    return buildNationalityItem(items[index]);
-                  },
-                ),
+              // Expanded(
+              //   child: GridView.builder(
+              //     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              //       crossAxisCount: 5,
+              //       childAspectRatio: 2,
+              //       crossAxisSpacing: 8,
+              //       mainAxisSpacing: 8,
+              //     ),
+              //     itemCount: items.length,
+              //     itemBuilder: (context, index) {
+              //       return buildNationalityItem(items[index]);
+              //     },
+              //   ),
+              // ),
+              SizedBox(
+                height: MediaQuery.sizeOf(context).height * 0.5,
+                width: 600,
+                child: DataTable2(
+                    columns: const [
+                      DataColumn2(
+                        label: Text('No.'),
+                        size: ColumnSize.S,
+                      ),
+                      DataColumn2(
+                        label: Text('Nationality'),
+                        size: ColumnSize.M,
+                      ),
+                      DataColumn2(
+                        label: Text('Total'),
+                        numeric: true,
+                        size: ColumnSize.S,
+                      ),
+                    ],
+                    rows: List<DataRow>.generate(
+                        items.length,
+                        (index) => DataRow(cells: [
+                              DataCell(Text((index + 1).toString())),
+                              DataCell(Text(items[index].item!.nationality ??
+                                  "Undefined")),
+                              DataCell(
+                                Text(items[index].item!.jumlah!),
+                              ),
+                            ]))),
               ),
               const SizedBox(height: 10),
               const Text(

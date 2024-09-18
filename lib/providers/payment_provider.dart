@@ -1,9 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:ybb_master_app/core/models/full_payment_model.dart';
+import 'package:ybb_master_app/core/models/payment_method_model.dart';
+import 'package:ybb_master_app/core/models/program_payment_model.dart';
 
 class PaymentProvider extends ChangeNotifier {
   List<FullPaymentModel> _payments = [];
   List<FullPaymentModel> _filteredPayments = [];
+  List<ProgramPaymentModel> _programPayments = [];
+  List<PaymentMethodModel> _paymentMethods = [];
+
+  List<PaymentMethodModel> get paymentMethods => _paymentMethods;
+
+  set paymentMethods(List<PaymentMethodModel> paymentMethods) {
+    _paymentMethods = paymentMethods;
+    notifyListeners();
+  }
+
+  List<ProgramPaymentModel> get programPayments => _programPayments;
+
+  set programPayments(List<ProgramPaymentModel> programPayments) {
+    _programPayments = programPayments;
+    notifyListeners();
+  }
 
   List<FullPaymentModel> get filteredPayments => _filteredPayments;
 
