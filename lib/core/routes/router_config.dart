@@ -5,6 +5,7 @@ import 'package:ybb_master_app/core/models/ambassador_model.dart';
 import 'package:ybb_master_app/core/models/full_payment_model.dart';
 import 'package:ybb_master_app/core/models/payment_method_model.dart';
 import 'package:ybb_master_app/core/models/program_announcement/program_announcement_model.dart';
+import 'package:ybb_master_app/core/models/program_certificate_model.dart';
 import 'package:ybb_master_app/core/models/program_document_model.dart';
 import 'package:ybb_master_app/core/models/program_payment_model.dart';
 import 'package:ybb_master_app/core/models/program_timeline_model.dart';
@@ -15,6 +16,7 @@ import 'package:ybb_master_app/screens/announcements/announcement_detail.dart';
 import 'package:ybb_master_app/screens/announcements/announcement_list.dart';
 import 'package:ybb_master_app/screens/auth/auth.dart';
 import 'package:ybb_master_app/screens/base/base_nav.dart';
+import 'package:ybb_master_app/screens/certificates/program_certificates.dart';
 import 'package:ybb_master_app/screens/dashboard/dashboard.dart';
 import 'package:ybb_master_app/screens/master_settings/master_program_categories.dart';
 import 'package:ybb_master_app/screens/master_settings/master_programs.dart';
@@ -24,9 +26,9 @@ import 'package:ybb_master_app/screens/payments/payment_statistics.dart';
 import 'package:ybb_master_app/screens/payments/payments.dart';
 import 'package:ybb_master_app/screens/program_management/add_program/add_program.dart';
 import 'package:ybb_master_app/screens/program_management/edit_program/edit_program.dart';
-import 'package:ybb_master_app/screens/settings/certificates/add_edit_program_certificate.dart';
-import 'package:ybb_master_app/screens/settings/certificates/program_certificate_detail.dart';
-import 'package:ybb_master_app/screens/settings/certificates/program_certificate_setting.dart';
+import 'package:ybb_master_app/screens/settings/program_certificates/add_edit_program_certificate.dart';
+import 'package:ybb_master_app/screens/settings/program_certificates/program_certificate_detail.dart';
+import 'package:ybb_master_app/screens/settings/program_certificates/program_certificate_setting.dart';
 import 'package:ybb_master_app/screens/settings/landing_page/landing_page_setting.dart';
 import 'package:ybb_master_app/screens/settings/payment_methods/add_edit_payment_method.dart';
 import 'package:ybb_master_app/screens/settings/payment_methods/payment_method_setting.dart';
@@ -58,6 +60,8 @@ final _shellNavigatorPaymentsKey =
     GlobalKey<NavigatorState>(debugLabel: 'payments');
 final _shellNavigatorAnnouncementsKey =
     GlobalKey<NavigatorState>(debugLabel: 'announcements');
+final _shellNavigatorCertificatesKey =
+    GlobalKey<NavigatorState>(debugLabel: 'certificates');
 final _shellNavigatorSettingsKey =
     GlobalKey<NavigatorState>(debugLabel: 'settings');
 final _shellNavigatorMasterSettingsKey =
@@ -225,6 +229,28 @@ class AppRouteConfig {
             ],
           ),
           StatefulShellBranch(
+            navigatorKey: _shellNavigatorCertificatesKey,
+            routes: [
+              GoRoute(
+                name: AppRouteConstants.certificatesRouteName,
+                path: AppRouteConstants.certificatesRoutePath,
+                pageBuilder: (context, state) => const NoTransitionPage(
+                  child: ProgramCertificates(),
+                ),
+                routes: [
+                  // GoRoute(
+                  //   path: 'details',
+                  //   pageBuilder: (context, state) => NoTransitionPage(
+                  //     child: PaymentDetail(
+                  //       payment: state.extra as FullPaymentModel,
+                  //     ),
+                  //   ),
+                  // ),
+                ],
+              ),
+            ],
+          ),
+          StatefulShellBranch(
             navigatorKey: _shellNavigatorSettingsKey,
             routes: [
               GoRoute(
@@ -335,7 +361,10 @@ class AppRouteConfig {
                           pageBuilder: (context, state) => NoTransitionPage(
                               child: state.extra == null
                                   ? const AddEditProgramCertificate()
-                                  : const AddEditProgramCertificate()),
+                                  : AddEditProgramCertificate(
+                                      certificate: state.extra
+                                          as ProgramCertificateModel,
+                                    )),
                         ),
                         GoRoute(
                           name: AppRouteConstants
@@ -343,7 +372,9 @@ class AppRouteConfig {
                           path: AppRouteConstants
                               .programCertificateDetailRoutePath,
                           pageBuilder: (context, state) => NoTransitionPage(
-                              child: ProgramCertificateDetail()),
+                              child: ProgramCertificateDetail(
+                            certificate: state.extra as ProgramCertificateModel,
+                          )),
                         ),
                       ]),
                   GoRoute(

@@ -6,6 +6,7 @@ class AppRouteConstants {
   static const String usersRouteName = 'users';
   static const String usersDetailsRouteName = 'users/details';
   static const String paymentsRouteName = 'payments';
+  static const String certificatesRouteName = 'certificates';
   static const String paymentsDetailsRouteName = 'payments/details';
   static const String addProgramRouteName = 'add-program';
   static const String settingsRouteName = 'settings';
@@ -17,6 +18,7 @@ class AppRouteConstants {
   static const String usersRoutePath = '/users';
   static const String usersDetailsRoutePath = '/users/details';
   static const String paymentsRoutePath = '/payments';
+  static const String certificatesRoutePath = '/certificates';
   static const String paymentsDetailsRoutePath = '/payments/details';
   static const String addProgramRoutePath = '/add-program';
   static const String settingsPathName = '/settings';

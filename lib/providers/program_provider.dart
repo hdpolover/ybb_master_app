@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ybb_master_app/core/models/payment_method_model.dart';
 import 'package:ybb_master_app/core/models/program/program_model.dart';
 import 'package:ybb_master_app/core/models/program/program_category_model.dart';
+import 'package:ybb_master_app/core/models/program_certificate_model.dart';
 import 'package:ybb_master_app/core/models/program_document_model.dart';
 import 'package:ybb_master_app/core/models/program_payment_model.dart';
 import 'package:ybb_master_app/core/models/program_timeline_model.dart';
@@ -14,6 +15,32 @@ class ProgramProvider extends ChangeNotifier {
   List<PaymentMethodModel>? _paymentMethods;
   List<ProgramTimelineModel>? _programTimelines;
   List<ProgramDocumentModel>? _programDocuments;
+  List<ProgramCertificateModel>? _programCertificates;
+
+  List<ProgramCertificateModel>? get programCertificates =>
+      _programCertificates;
+
+  set programCertificates(List<ProgramCertificateModel>? programCertificates) {
+    _programCertificates = programCertificates;
+    notifyListeners();
+  }
+
+  addProgramCertificate(ProgramCertificateModel programCertificate) {
+    _programCertificates!.add(programCertificate);
+    notifyListeners();
+  }
+
+  removeProgramCertificate(ProgramCertificateModel programCertificate) {
+    _programCertificates!.remove(programCertificate);
+    notifyListeners();
+  }
+
+  updateProgramCertificate(ProgramCertificateModel programCertificate) {
+    int index = _programCertificates!
+        .indexWhere((element) => element.id == programCertificate.id);
+    _programCertificates![index] = programCertificate;
+    notifyListeners();
+  }
 
   List<ProgramDocumentModel>? get programDocuments => _programDocuments;
 

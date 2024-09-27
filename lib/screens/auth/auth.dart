@@ -8,6 +8,7 @@ import 'package:ybb_master_app/core/routes/route_constants.dart';
 import 'package:ybb_master_app/core/services/admin_service.dart';
 import 'package:ybb_master_app/core/services/program_category_service.dart';
 import 'package:ybb_master_app/core/services/program_service.dart';
+import 'package:ybb_master_app/core/widgets/loading_widget.dart';
 import 'package:ybb_master_app/providers/admin_provider.dart';
 import 'package:ybb_master_app/providers/program_provider.dart';
 
@@ -21,6 +22,8 @@ class Auth extends StatefulWidget {
 class _AuthState extends State<Auth> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+
+  bool isLoading = false;
 
   getProgramData() async {
     try {
@@ -145,36 +148,50 @@ class _AuthState extends State<Auth> {
                         ),
                         const SizedBox(height: 40),
                         // create a button to sign in with the text "Sign in" using the elevated button widget and color it blue, make the width as big as the parent
-                        ElevatedButton(
-                          onPressed: () async {
-                            String email = "ival@gmail.com";
-                            String password = "123";
+                        isLoading
+                            ? const LoadingWidget()
+                            : ElevatedButton(
+                                onPressed: () async {
+                                  setState(() {
+                                    isLoading = true;
+                                  });
 
-                            await AdminService()
-                                .login(email, password)
-                                .then((value) {
-                              decideWhichAdmin(value);
-                            }).onError((error, stackTrace) {
-                              CommonHelper()
-                                  .showError(context, error.toString());
-                            });
-                            //signIn();
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blue,
-                            minimumSize: const Size(double.infinity, 60),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                          ),
-                          child: const Text(
-                            'Sign in',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
+                                  String email = "ival@gmail.com";
+                                  String password = "123";
+
+                                  await AdminService()
+                                      .login(email, password)
+                                      .then((value) {
+                                    setState(() {
+                                      isLoading = false;
+                                    });
+
+                                    decideWhichAdmin(value);
+                                  }).onError((error, stackTrace) {
+                                    setState(() {
+                                      isLoading = false;
+                                    });
+
+                                    CommonHelper()
+                                        .showError(context, error.toString());
+                                  });
+                                  //signIn();
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.blue,
+                                  minimumSize: const Size(double.infinity, 60),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                ),
+                                child: const Text(
+                                  'Sign in',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
                       ],
                     ),
                   ),

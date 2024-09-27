@@ -44,8 +44,8 @@ class _PaymentMethodSettingDetailState
                 "Payment Method Description",
                 widget.paymentMethod!.description!,
               ),
-              CommonWidgets()
-                  .buildTextImageItem("Image", widget.paymentMethod!.imgUrl!),
+              CommonWidgets().buildTextImageItem(
+                  context, "Image", widget.paymentMethod!.imgUrl!),
               const SizedBox(height: 20),
               CommonWidgets().buildCustomButton(
                 color: Colors.orange,

@@ -30,7 +30,7 @@ class PaymentService {
 
         return value;
       } else {
-        throw jsonDecode(response.body)['message'];
+        return [];
       }
     } catch (e) {
       rethrow;
@@ -80,7 +80,7 @@ class PaymentService {
 
         return value;
       } else {
-        throw jsonDecode(response.body)['message'];
+        return [];
       }
     } catch (e) {
       rethrow;

@@ -1,4 +1,5 @@
 import 'package:clipboard/clipboard.dart';
+import 'package:easy_image_viewer/easy_image_viewer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_quill/flutter_quill.dart';
@@ -94,7 +95,7 @@ class CommonWidgets {
     );
   }
 
-  buildTextImageItem(String label, String imgUrl) {
+  buildTextImageItem(BuildContext context, String label, String imgUrl) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: Column(
@@ -109,11 +110,20 @@ class CommonWidgets {
             ),
           ),
           const SizedBox(height: 10),
-          Image.network(
-            imgUrl,
-            width: 100,
-            height: 100,
-          ),
+          GestureDetector(
+            onTap: () {
+              showImageViewer(
+                context,
+                Image.network(imgUrl).image,
+                useSafeArea: true,
+                swipeDismissible: true,
+                doubleTapZoomable: true,
+              );
+            },
+            child: SizedBox(
+                height: MediaQuery.of(context).size.height * 0.5,
+                child: Image.network(imgUrl)),
+          )
         ],
       ),
     );

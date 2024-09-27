@@ -44,6 +44,8 @@ class FullPaymentModel {
   String? xenditStatus;
   dynamic xenditPaymentMethod;
   String? nationality;
+  String? gender;
+  String? institution;
 
   FullPaymentModel({
     this.id,
@@ -79,6 +81,8 @@ class FullPaymentModel {
     this.xenditStatus,
     this.xenditPaymentMethod,
     this.nationality,
+    this.gender,
+    this.institution,
   });
 
   factory FullPaymentModel.fromJson(Map<String, dynamic> json) =>
@@ -123,6 +127,8 @@ class FullPaymentModel {
         xenditStatus: json["xendit_status"],
         xenditPaymentMethod: json["xendit_payment_method"],
         nationality: json["nationality"],
+        gender: json["gender"],
+        institution: json["institution"],
       );
 
   Map<String, dynamic> toJson() => {

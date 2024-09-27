@@ -4,15 +4,10 @@ import 'package:ybb_master_app/core/models/users/participant_model.dart';
 import 'package:ybb_master_app/core/widgets/common_methods.dart';
 import 'package:ybb_master_app/core/widgets/common_widgets.dart';
 
-class PBasicInfo extends StatefulWidget {
+class PBasicInfo extends StatelessWidget {
   final ParticipantModel participant;
   const PBasicInfo({super.key, required this.participant});
 
-  @override
-  State<PBasicInfo> createState() => _PBasicInfoState();
-}
-
-class _PBasicInfoState extends State<PBasicInfo> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -22,8 +17,8 @@ class _PBasicInfoState extends State<PBasicInfo> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            widget.participant.pictureUrl == null
-                ? Icon(
+            participant.pictureUrl == null
+                ? const Icon(
                     Icons.person,
                     size: 150,
                   )
@@ -31,7 +26,7 @@ class _PBasicInfoState extends State<PBasicInfo> {
                     onTap: () {
                       showImageViewer(
                         context,
-                        Image.network(widget.participant.pictureUrl!).image,
+                        Image.network(participant.pictureUrl!).image,
                         useSafeArea: true,
                         swipeDismissible: true,
                         doubleTapZoomable: true,
@@ -39,53 +34,53 @@ class _PBasicInfoState extends State<PBasicInfo> {
                     },
                     child: SizedBox(
                         height: MediaQuery.of(context).size.height * 0.2,
-                        child: Image.network(widget.participant.pictureUrl!)),
+                        child: Image.network(participant.pictureUrl!)),
                   ),
             CommonWidgets().buildTitleTextItem(
-                "Full name", widget.participant.fullName ?? "-",
+                "Full name", participant.fullName ?? "-",
                 isCopyable: true, context: context),
             CommonWidgets().buildTitleTextItem(
-                "Email", widget.participant.email ?? "-",
+                "Email", participant.email ?? "-",
                 isCopyable: true, context: context),
             CommonWidgets()
-                .buildTitleTextItem("Gender", widget.participant.gender ?? "-"),
+                .buildTitleTextItem("Gender", participant.gender ?? "-"),
             CommonWidgets().buildTitleTextItem(
                 "Birth Date",
-                widget.participant.birthdate == null
+                participant.birthdate == null
                     ? "-"
-                    : CommonMethods.formatDate(widget.participant.birthdate!)),
+                    : CommonMethods.formatDate(participant.birthdate!)),
             CommonWidgets().buildTitleTextItem(
-                "Phone number", widget.participant.phoneNumber ?? "-",
+                "Phone number", participant.phoneNumber ?? "-",
                 isCopyable: true, context: context),
             CommonWidgets().buildTitleTextItem(
-                "Origin Address", widget.participant.originAddress ?? "-"),
+                "Origin Address", participant.originAddress ?? "-"),
             CommonWidgets().buildTitleTextItem(
-                "Current Address", widget.participant.currentAddress ?? "-"),
+                "Current Address", participant.currentAddress ?? "-"),
             CommonWidgets().buildTitleTextItem(
-                "Nationality", widget.participant.nationality ?? "-"),
+                "Nationality", participant.nationality ?? "-"),
             CommonWidgets().buildTitleTextItem(
-                "Tshirt Size", widget.participant.tshirtSize ?? "-"),
+                "Tshirt Size", participant.tshirtSize ?? "-"),
             CommonWidgets().buildTitleTextItem(
-                "Disease History", widget.participant.diseaseHistory ?? "-"),
+                "Disease History", participant.diseaseHistory ?? "-"),
             CommonWidgets().buildTitleTextItem(
-                "Occupation", widget.participant.occupation ?? "-"),
+                "Occupation", participant.occupation ?? "-"),
             CommonWidgets().buildTitleTextItem(
-                "Institution", widget.participant.institution ?? "-"),
+                "Institution", participant.institution ?? "-"),
             CommonWidgets().buildTitleTextItem(
-                "Organization", widget.participant.organizations ?? "-"),
+                "Organization", participant.organizations ?? "-"),
             CommonWidgets().buildTitleTextItem(
-                "Achievements", widget.participant.achievements ?? "-"),
+                "Achievements", participant.achievements ?? "-"),
             CommonWidgets().buildTitleTextItem(
-                "Experiences", widget.participant.experiences ?? "-"),
+                "Experiences", participant.experiences ?? "-"),
             CommonWidgets().buildTitleTextItem(
-                "Twibbon Link", widget.participant.twibbonLink ?? "-"),
+                "Twibbon Link", participant.twibbonLink ?? "-"),
             CommonWidgets().buildTitleTextItem(
-                "Instagram", widget.participant.instagramAccount ?? "-"),
-            CommonWidgets().buildTitleTextItem("Source Account Name",
-                widget.participant.sourceAccountName ?? "-"),
+                "Instagram", participant.instagramAccount ?? "-"),
+            CommonWidgets().buildTitleTextItem(
+                "Source Account Name", participant.sourceAccountName ?? "-"),
             CommonWidgets().buildTitleTextItem(
               "Know Program From",
-              widget.participant.knowledgeSource ?? "-",
+              participant.knowledgeSource ?? "-",
             )
           ],
         ),

@@ -12,6 +12,7 @@ import 'package:ybb_master_app/core/services/program_payment_method_service.dart
 import 'package:ybb_master_app/core/services/program_payment_service.dart';
 import 'package:ybb_master_app/core/widgets/common_app_bar.dart';
 import 'package:ybb_master_app/core/widgets/common_dialog.dart';
+import 'package:ybb_master_app/core/widgets/common_methods.dart';
 import 'package:ybb_master_app/core/widgets/common_widgets.dart';
 import 'package:ybb_master_app/providers/payment_provider.dart';
 import 'package:ybb_master_app/providers/program_provider.dart';
@@ -261,6 +262,18 @@ class _PaymentsState extends State<Payments> {
                   ? "No text filter"
                   : selectedFilters[key].toString();
               filterText += "Text: $textQuery";
+            } else if (key == "start_date") {
+              String startDate = selectedFilters[key].toString().isEmpty
+                  ? "All start dates"
+                  : CommonMethods.formatDate(
+                      DateTime.parse(selectedFilters[key].toString()));
+              filterText += "Start Date: $startDate";
+            } else if (key == "end_date") {
+              String endDate = selectedFilters[key].toString().isEmpty
+                  ? "All end dates"
+                  : CommonMethods.formatDate(
+                      DateTime.parse(selectedFilters[key].toString()));
+              filterText += "End Date: $endDate";
             }
 
             if (selectedFilters.keys.last != key) {
@@ -325,6 +338,21 @@ class _PaymentsState extends State<Payments> {
       }
     }
 
+    if (selectedFilters["start_date"] != "" &&
+        selectedFilters["end_date"] != "") {
+      // make sure the payment are within the selected date range
+      filteredTemp = filteredTemp.where((participant) {
+        DateTime startDate = DateTime.parse(selectedFilters["start_date"]);
+        DateTime endDate = DateTime.parse(selectedFilters["end_date"]);
+
+        // check if the payment is within the selected date range. start date and end date are inclusive
+        return participant.createdAt!
+                .isAfter(startDate.subtract(const Duration(days: 1))) &&
+            participant.createdAt!
+                .isBefore(endDate.add(const Duration(days: 1)));
+      }).toList();
+    }
+
     filteredPayments = filteredTemp;
 
     resultCount = filteredPayments!.length;
@@ -367,9 +395,9 @@ class _PaymentsState extends State<Payments> {
                 CommonDialog.showConfirmationDialog(context, "Export to Excel",
                     "Do you want to export the payments to an Excel file?\n\nDetails: $detailText",
                     () {
-                  Navigator.of(context).pop();
-
                   ExcelHelper.exportPaymentData(filteredPayments!, filterText);
+
+                  Navigator.of(context, rootNavigator: true).pop();
                 });
               },
             ),

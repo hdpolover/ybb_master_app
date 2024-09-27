@@ -27,7 +27,10 @@ class ExcelHelper {
       'No.',
       'Full Name',
       'Email',
+      'Gender',
       'Phone Number',
+      'Nationality',
+      'Institution',
       'Program Payment Name',
       'Payment Method Name',
       'Payment Type',
@@ -50,7 +53,10 @@ class ExcelHelper {
       cellValues.add(TextCellValue(index.toString()));
       cellValues.add(TextCellValue(payment.fullName ?? "-"));
       cellValues.add(TextCellValue(payment.email ?? "-"));
+      cellValues.add(TextCellValue(payment.gender ?? "-"));
       cellValues.add(TextCellValue(payment.phoneNumber ?? "-"));
+      cellValues.add(TextCellValue(payment.nationality ?? "-"));
+      cellValues.add(TextCellValue(payment.institution ?? "-"));
       cellValues.add(TextCellValue(payment.programPaymentsName ?? "-"));
       cellValues.add(TextCellValue(payment.paymentMethodsName ?? "-"));
       cellValues.add(TextCellValue(payment.type ?? "-"));
