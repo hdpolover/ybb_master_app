@@ -63,7 +63,6 @@ class ProgramDocumentModel {
       );
 
   Map<String, dynamic> toJson() => {
-        "id": id,
         "program_id": programId,
         "name": name,
         "file_url": fileUrl,
@@ -72,9 +71,5 @@ class ProgramDocumentModel {
         "is_upload": isUpload,
         "is_generated": isGenerated,
         "visibility": visibility,
-        "is_active": isActive,
-        "is_deleted": isDeleted,
-        "created_at": createdAt?.toIso8601String(),
-        "updated_at": updatedAt?.toIso8601String(),
       };
 }

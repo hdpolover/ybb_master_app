@@ -19,4 +19,9 @@ class CommonMethods {
     // format date with time to be like "April 14, 2024 10:00:00"
     return date == null ? "-" : DateFormat("dd MMM yyyy hh:mm").format(date);
   }
+
+  static DateTime formatDatePretty(DateTime date) {
+    // format date to be like "April 14, 2024"
+    return DateTime.parse(DateFormat("dd MMM yyyy").format(date));
+  }
 }

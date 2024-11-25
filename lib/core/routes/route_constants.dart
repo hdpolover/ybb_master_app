@@ -72,6 +72,15 @@ class AppRouteConstants {
   static const String addEditProgramDocumentRoutePath =
       'add-edit-program-document';
 
+  static const String documentBatchSettingRouteName = 'document-batches';
+  static const String documentBatchSettingRoutePath = 'document-batches';
+
+  static const String documentBatchDetailRouteName = 'document-batch-details';
+  static const String documentBatchDetailRoutePath = 'document-batch-details';
+
+  static const String addEditDocumentBatchRouteName = 'add-edit-document-batch';
+  static const String addEditDocumentBatchRoutePath = 'add-edit-document-batch';
+
   static const String programTimelineSettingRouteName = 'program-timeline';
   static const String programTimelineSettingRoutePath = 'program-timeline';
 
@@ -122,4 +131,9 @@ class AppRouteConstants {
 
   static const String paymentStatisticsRouteName = 'payment-statistics';
   static const String paymentStatisticsRoutePath = 'payment-statistics';
+
+  static const String certificateSettingDetailRouteName =
+      "certificate-setting-details";
+  static const String certificateSettingDetailRoutePath =
+      "certificate-setting-details";
 }

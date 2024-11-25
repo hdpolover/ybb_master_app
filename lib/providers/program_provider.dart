@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ybb_master_app/core/models/document_batch_model.dart';
 import 'package:ybb_master_app/core/models/payment_method_model.dart';
 import 'package:ybb_master_app/core/models/program/program_model.dart';
 import 'package:ybb_master_app/core/models/program/program_category_model.dart';
@@ -16,6 +17,31 @@ class ProgramProvider extends ChangeNotifier {
   List<ProgramTimelineModel>? _programTimelines;
   List<ProgramDocumentModel>? _programDocuments;
   List<ProgramCertificateModel>? _programCertificates;
+  List<DocumentBatchModel>? _documentBatches;
+
+  List<DocumentBatchModel>? get documentBatches => _documentBatches;
+
+  set documentBatches(List<DocumentBatchModel>? documentBatches) {
+    _documentBatches = documentBatches;
+    notifyListeners();
+  }
+
+  addDocumentBatch(DocumentBatchModel documentBatch) {
+    _documentBatches!.add(documentBatch);
+    notifyListeners();
+  }
+
+  removeDocumentBatch(DocumentBatchModel documentBatch) {
+    _documentBatches!.remove(documentBatch);
+    notifyListeners();
+  }
+
+  updateDocumentBatch(DocumentBatchModel documentBatch) {
+    int index = _documentBatches!
+        .indexWhere((element) => element.id == documentBatch.id);
+    _documentBatches![index] = documentBatch;
+    notifyListeners();
+  }
 
   List<ProgramCertificateModel>? get programCertificates =>
       _programCertificates;

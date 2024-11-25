@@ -68,6 +68,8 @@ class DashboardService {
     var url = Uri.parse(
         '$dashboardUrl/participant_stats?param=gender&program_id=$programId');
 
+    print(url);
+
     try {
       var response = await http.get(url);
 

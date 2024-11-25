@@ -3,13 +3,14 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:ybb_master_app/core/constants/string_constants.dart';
+import 'package:ybb_master_app/core/models/document_batch_model.dart';
 import 'package:ybb_master_app/core/models/program_document_model.dart';
 import 'package:ybb_master_app/core/models/program_timeline_model.dart';
 
-class ProgramDocumentService {
-  String baseUrl = '${AppStringConstants.apiUrl}/program_documents';
+class ProgramDocumentSettingService {
+  String baseUrl = '${AppStringConstants.apiUrl}/program_document_settings';
 
-  Future<List<ProgramDocumentModel>> getAll(String programId) async {
+  Future<List<DocumentBatchModel>> getAll(String programId) async {
     var url = Uri.parse('$baseUrl/list?program_id=$programId');
 
     try {
@@ -18,10 +19,10 @@ class ProgramDocumentService {
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body)['data'];
 
-        List<ProgramDocumentModel> value = [];
+        List<DocumentBatchModel> value = [];
 
         for (var prog in data) {
-          value.add(ProgramDocumentModel.fromJson(prog));
+          value.add(DocumentBatchModel.fromJson(prog));
         }
 
         return value;
@@ -33,7 +34,7 @@ class ProgramDocumentService {
     }
   }
 
-  Future<ProgramDocumentModel> add(ProgramDocumentModel data) async {
+  Future<DocumentBatchModel> add(DocumentBatchModel data) async {
     var url = Uri.parse('$baseUrl/save');
 
     try {
@@ -42,7 +43,7 @@ class ProgramDocumentService {
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body)['data'];
 
-        ProgramDocumentModel value = ProgramDocumentModel.fromJson(data);
+        DocumentBatchModel value = DocumentBatchModel.fromJson(data);
 
         return value;
       } else {
@@ -67,7 +68,7 @@ class ProgramDocumentService {
     }
   }
 
-  Future<ProgramDocumentModel> update(ProgramDocumentModel data) async {
+  Future<DocumentBatchModel> update(DocumentBatchModel data) async {
     var url = Uri.parse('$baseUrl/update/${data.id}');
 
     try {
@@ -76,7 +77,7 @@ class ProgramDocumentService {
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body)['data'];
 
-        ProgramDocumentModel value = ProgramDocumentModel.fromJson(data);
+        DocumentBatchModel value = DocumentBatchModel.fromJson(data);
 
         return value;
       } else {

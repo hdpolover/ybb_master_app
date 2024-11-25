@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ybb_master_app/core/models/ambassador_model.dart';
+import 'package:ybb_master_app/core/models/document_batch_model.dart';
 import 'package:ybb_master_app/core/models/full_payment_model.dart';
 import 'package:ybb_master_app/core/models/payment_method_model.dart';
 import 'package:ybb_master_app/core/models/program_announcement/program_announcement_model.dart';
@@ -11,46 +12,49 @@ import 'package:ybb_master_app/core/models/program_payment_model.dart';
 import 'package:ybb_master_app/core/models/program_timeline_model.dart';
 import 'package:ybb_master_app/core/models/users/participant_model.dart';
 import 'package:ybb_master_app/core/routes/route_constants.dart';
-import 'package:ybb_master_app/screens/announcements/add_edit_announcement.dart';
-import 'package:ybb_master_app/screens/announcements/announcement_detail.dart';
-import 'package:ybb_master_app/screens/announcements/announcement_list.dart';
-import 'package:ybb_master_app/screens/auth/auth.dart';
-import 'package:ybb_master_app/screens/base/base_nav.dart';
-import 'package:ybb_master_app/screens/certificates/program_certificates.dart';
-import 'package:ybb_master_app/screens/dashboard/dashboard.dart';
-import 'package:ybb_master_app/screens/master_settings/master_program_categories.dart';
-import 'package:ybb_master_app/screens/master_settings/master_programs.dart';
-import 'package:ybb_master_app/screens/master_settings/master_settings.dart';
-import 'package:ybb_master_app/screens/payments/payment_detail.dart';
-import 'package:ybb_master_app/screens/payments/payment_statistics.dart';
-import 'package:ybb_master_app/screens/payments/payments.dart';
-import 'package:ybb_master_app/screens/program_management/add_program/add_program.dart';
-import 'package:ybb_master_app/screens/program_management/edit_program/edit_program.dart';
-import 'package:ybb_master_app/screens/settings/program_certificates/add_edit_program_certificate.dart';
-import 'package:ybb_master_app/screens/settings/program_certificates/program_certificate_detail.dart';
-import 'package:ybb_master_app/screens/settings/program_certificates/program_certificate_setting.dart';
-import 'package:ybb_master_app/screens/settings/landing_page/landing_page_setting.dart';
-import 'package:ybb_master_app/screens/settings/payment_methods/add_edit_payment_method.dart';
-import 'package:ybb_master_app/screens/settings/payment_methods/payment_method_setting.dart';
-import 'package:ybb_master_app/screens/settings/payment_methods/payment_method_setting_detail.dart';
-import 'package:ybb_master_app/screens/settings/payments/add_edit_payment.dart';
-import 'package:ybb_master_app/screens/settings/payments/payment_setting.dart';
-import 'package:ybb_master_app/screens/settings/payments/payment_setting_detail.dart';
-import 'package:ybb_master_app/screens/settings/program_documents/add_edit_program_document.dart';
-import 'package:ybb_master_app/screens/settings/program_documents/program_document_detail.dart';
-import 'package:ybb_master_app/screens/settings/program_documents/program_document_setting.dart';
-import 'package:ybb_master_app/screens/settings/settings.dart';
-import 'package:ybb_master_app/screens/settings/timeline/add_edit_program_timeline.dart';
-import 'package:ybb_master_app/screens/settings/timeline/program_timeline_detail.dart';
-import 'package:ybb_master_app/screens/settings/timeline/program_timeline_setting.dart';
-import 'package:ybb_master_app/screens/users/ambassadors/add_ambassador.dart';
-import 'package:ybb_master_app/screens/users/ambassadors/ambassador_detail.dart';
-import 'package:ybb_master_app/screens/users/ambassadors/ambassador_list.dart';
-import 'package:ybb_master_app/screens/users/participants/participant_details.dart';
-import 'package:ybb_master_app/screens/users/participants/participant_list.dart';
-import 'package:ybb_master_app/screens/users/users_page.dart';
-import 'package:ybb_master_app/screens/users/widgets/participant_preview_widget.dart';
-import 'package:ybb_master_app/screens/welcome/welcome.dart';
+import 'package:ybb_master_app/screens/admin/announcements/add_edit_announcement.dart';
+import 'package:ybb_master_app/screens/admin/announcements/announcement_detail.dart';
+import 'package:ybb_master_app/screens/admin/announcements/announcement_list.dart';
+import 'package:ybb_master_app/screens/admin/auth/auth.dart';
+import 'package:ybb_master_app/screens/admin/base/base_nav.dart';
+import 'package:ybb_master_app/screens/admin/certificates/program_certificate_detail.dart';
+import 'package:ybb_master_app/screens/admin/certificates/program_certificates.dart';
+import 'package:ybb_master_app/screens/admin/dashboard/dashboard.dart';
+import 'package:ybb_master_app/screens/admin/master_settings/master_program_categories.dart';
+import 'package:ybb_master_app/screens/admin/master_settings/master_programs.dart';
+import 'package:ybb_master_app/screens/admin/master_settings/master_settings.dart';
+import 'package:ybb_master_app/screens/admin/payments/payment_detail.dart';
+import 'package:ybb_master_app/screens/admin/payments/payment_statistics.dart';
+import 'package:ybb_master_app/screens/admin/payments/payments.dart';
+import 'package:ybb_master_app/screens/admin/program_management/add_program/add_program.dart';
+import 'package:ybb_master_app/screens/admin/settings/program_certificates/add_edit_program_certificate.dart';
+import 'package:ybb_master_app/screens/admin/settings/program_certificates/program_certificate_setting_detail.dart';
+import 'package:ybb_master_app/screens/admin/settings/program_certificates/program_certificate_setting.dart';
+import 'package:ybb_master_app/screens/admin/settings/landing_page/landing_page_setting.dart';
+import 'package:ybb_master_app/screens/admin/settings/payment_methods/add_edit_payment_method.dart';
+import 'package:ybb_master_app/screens/admin/settings/payment_methods/payment_method_setting.dart';
+import 'package:ybb_master_app/screens/admin/settings/payment_methods/payment_method_setting_detail.dart';
+import 'package:ybb_master_app/screens/admin/settings/payments/add_edit_payment.dart';
+import 'package:ybb_master_app/screens/admin/settings/payments/payment_setting.dart';
+import 'package:ybb_master_app/screens/admin/settings/payments/payment_setting_detail.dart';
+import 'package:ybb_master_app/screens/admin/settings/program_documents/add_edit_program_document.dart';
+import 'package:ybb_master_app/screens/admin/settings/program_documents/document_batches/add_edit_document_batch.dart';
+import 'package:ybb_master_app/screens/admin/settings/program_documents/document_batches/document_batch_detail.dart';
+import 'package:ybb_master_app/screens/admin/settings/program_documents/document_batches/document_batch_setting.dart';
+import 'package:ybb_master_app/screens/admin/settings/program_documents/program_document_detail.dart';
+import 'package:ybb_master_app/screens/admin/settings/program_documents/program_document_setting.dart';
+import 'package:ybb_master_app/screens/admin/settings/settings.dart';
+import 'package:ybb_master_app/screens/admin/settings/timeline/add_edit_program_timeline.dart';
+import 'package:ybb_master_app/screens/admin/settings/timeline/program_timeline_detail.dart';
+import 'package:ybb_master_app/screens/admin/settings/timeline/program_timeline_setting.dart';
+import 'package:ybb_master_app/screens/admin/users/ambassadors/add_ambassador.dart';
+import 'package:ybb_master_app/screens/admin/users/ambassadors/ambassador_detail.dart';
+import 'package:ybb_master_app/screens/admin/users/ambassadors/ambassador_list.dart';
+import 'package:ybb_master_app/screens/admin/users/participants/participant_details.dart';
+import 'package:ybb_master_app/screens/admin/users/participants/participant_list.dart';
+import 'package:ybb_master_app/screens/admin/users/users_page.dart';
+import 'package:ybb_master_app/screens/admin/welcome/welcome.dart';
+import 'package:ybb_master_app/screens/reviewers/auth.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _shellNavigatorUserKey = GlobalKey<NavigatorState>(debugLabel: 'users');
@@ -238,14 +242,16 @@ class AppRouteConfig {
                   child: ProgramCertificates(),
                 ),
                 routes: [
-                  // GoRoute(
-                  //   path: 'details',
-                  //   pageBuilder: (context, state) => NoTransitionPage(
-                  //     child: PaymentDetail(
-                  //       payment: state.extra as FullPaymentModel,
-                  //     ),
-                  //   ),
-                  // ),
+                  GoRoute(
+                    path: AppRouteConstants.programCertificateDetailRouteName,
+                    name: AppRouteConstants.programCertificateDetailRoutePath,
+                    pageBuilder: (context, state) => NoTransitionPage(
+                      child: ProgramCertificateDetail(
+                        programCertificate:
+                            state.extra as ProgramCertificateModel,
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ],
@@ -345,6 +351,31 @@ class AppRouteConfig {
                           programDocument: state.extra as ProgramDocumentModel,
                         )),
                       ),
+                      GoRoute(
+                        name: AppRouteConstants.addEditDocumentBatchRouteName,
+                        path: AppRouteConstants.addEditDocumentBatchRoutePath,
+                        pageBuilder: (context, state) => NoTransitionPage(
+                            child: state.extra == null
+                                ? const AddEditDocumentBatch()
+                                : AddEditDocumentBatch(
+                                    documentBatch:
+                                        state.extra as DocumentBatchModel,
+                                  )),
+                      ),
+                      GoRoute(
+                        name: AppRouteConstants.documentBatchDetailRouteName,
+                        path: AppRouteConstants.documentBatchDetailRoutePath,
+                        pageBuilder: (context, state) => NoTransitionPage(
+                            child: DocumentBatchDetail(
+                          documentBatch: state.extra as DocumentBatchModel,
+                        )),
+                      ),
+                      GoRoute(
+                        name: AppRouteConstants.documentBatchSettingRouteName,
+                        path: AppRouteConstants.documentBatchSettingRoutePath,
+                        pageBuilder: (context, state) => const NoTransitionPage(
+                            child: DocumentBatchSetting()),
+                      ),
                     ],
                   ),
                   GoRoute(
@@ -368,11 +399,11 @@ class AppRouteConfig {
                         ),
                         GoRoute(
                           name: AppRouteConstants
-                              .programCertificateDetailRouteName,
+                              .certificateSettingDetailRouteName,
                           path: AppRouteConstants
-                              .programCertificateDetailRoutePath,
+                              .certificateSettingDetailRoutePath,
                           pageBuilder: (context, state) => NoTransitionPage(
-                              child: ProgramCertificateDetail(
+                              child: ProgramCertificateSettingDetail(
                             certificate: state.extra as ProgramCertificateModel,
                           )),
                         ),
@@ -439,6 +470,15 @@ class AppRouteConfig {
             ],
           ),
         ],
+      ),
+
+      // reviewer pages
+      GoRoute(
+        name: ReviewerSignin.routeName,
+        path: ReviewerSignin.pathName,
+        pageBuilder: (context, state) => const NoTransitionPage(
+          child: ReviewerSignin(),
+        ),
       ),
     ],
   );

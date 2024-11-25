@@ -12,6 +12,8 @@ class ProgramCategoryService {
   Future<List<ProgramCategoryModel>> getAll() async {
     var url = Uri.parse('$programCategoriesUrl/');
 
+    print(url);
+
     try {
       var response = await http.get(url);
 

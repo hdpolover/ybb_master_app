@@ -98,6 +98,24 @@ class ProgramAnnouncementService {
     }
   }
 
+  Future<String> encrpytId(String id) async {
+    var url = Uri.parse('${AppStringConstants.apiUrl}/news/encrypt?id=$id');
+
+    print(url);
+
+    try {
+      var response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body)['data'];
+      } else {
+        throw jsonDecode(response.body)['message'];
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<List<ParticipantEssayModel>> getEssayByParticipantId(
       String? id) async {
     var url = Uri.parse(

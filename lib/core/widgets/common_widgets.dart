@@ -10,6 +10,22 @@ import 'package:ybb_master_app/core/constants/text_style_constants.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 
 class CommonWidgets {
+  static buildCommonButton(
+      {double? width,
+      Color? color,
+      required String text,
+      required Function() onPressed}) {
+    return MaterialButton(
+      minWidth: width ?? double.infinity,
+      height: 7.h,
+      color: color ?? AppColorConstants.kPrimaryColor,
+      // give radius to the button
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      onPressed: onPressed,
+      child: Text(text, style: AppTextStyleConstants.buttonTextStyle),
+    );
+  }
+
   static Widget buildLoading() {
     return const Center(
       child: CircularProgressIndicator(),
