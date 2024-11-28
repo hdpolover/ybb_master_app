@@ -21,40 +21,17 @@ class _WelcomeState extends State<Welcome> {
         height:
             MediaQuery.of(context).size.height * AppSizeConstants.appBarHeight,
       ),
-      body: Row(
-        children: [
-          Expanded(
-            child: Container(
-              width: MediaQuery.of(context).size.width * 0.3,
-              color: Colors.white,
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    //create a text widget with the text "Welcome to YBB Master App"
-                    Text("Welcome to YBB Master App",
-                        style:
-                            Theme.of(context).textTheme.headlineLarge!.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                )),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.05,
-                    ),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.3,
-                      child: SvgPicture.asset(AppAssetConstants.welcomeSvg,
-                          semanticsLabel: 'welcome'),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          const Expanded(
-            child: ProgramSection(),
-          ),
-        ],
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            const SizedBox(height: 20),
+            Text("Welcome to YBB Master App",
+                style: Theme.of(context).textTheme.headlineLarge!.copyWith(
+                      fontWeight: FontWeight.bold,
+                    )),
+            const ProgramSection(),
+          ],
+        ),
       ),
     );
   }

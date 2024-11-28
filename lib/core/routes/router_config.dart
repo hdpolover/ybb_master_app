@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:ybb_master_app/core/models/ambassador_model.dart';
 import 'package:ybb_master_app/core/models/document_batch_model.dart';
 import 'package:ybb_master_app/core/models/full_payment_model.dart';
+import 'package:ybb_master_app/core/models/paper_reviewer_model.dart';
+import 'package:ybb_master_app/core/models/paper_topic_model.dart';
 import 'package:ybb_master_app/core/models/payment_method_model.dart';
 import 'package:ybb_master_app/core/models/program_announcement/program_announcement_model.dart';
 import 'package:ybb_master_app/core/models/program_certificate_model.dart';
@@ -27,6 +29,8 @@ import 'package:ybb_master_app/screens/admin/payments/payment_detail.dart';
 import 'package:ybb_master_app/screens/admin/payments/payment_statistics.dart';
 import 'package:ybb_master_app/screens/admin/payments/payments.dart';
 import 'package:ybb_master_app/screens/admin/program_management/add_program/add_program.dart';
+import 'package:ybb_master_app/screens/admin/settings/paper_topics/add_edit_paper_topic.dart';
+import 'package:ybb_master_app/screens/admin/settings/paper_topics/paper_topic_list.dart';
 import 'package:ybb_master_app/screens/admin/settings/program_certificates/add_edit_program_certificate.dart';
 import 'package:ybb_master_app/screens/admin/settings/program_certificates/program_certificate_setting_detail.dart';
 import 'package:ybb_master_app/screens/admin/settings/program_certificates/program_certificate_setting.dart';
@@ -52,9 +56,15 @@ import 'package:ybb_master_app/screens/admin/users/ambassadors/ambassador_detail
 import 'package:ybb_master_app/screens/admin/users/ambassadors/ambassador_list.dart';
 import 'package:ybb_master_app/screens/admin/users/participants/participant_details.dart';
 import 'package:ybb_master_app/screens/admin/users/participants/participant_list.dart';
+import 'package:ybb_master_app/screens/admin/users/reviewers/add_edit_reviewer.dart';
+import 'package:ybb_master_app/screens/admin/users/reviewers/reviewer_detail.dart';
+import 'package:ybb_master_app/screens/admin/users/reviewers/reviewer_list.dart';
 import 'package:ybb_master_app/screens/admin/users/users_page.dart';
 import 'package:ybb_master_app/screens/admin/welcome/welcome.dart';
-import 'package:ybb_master_app/screens/reviewers/auth.dart';
+import 'package:ybb_master_app/screens/reviewers/dashboard_reviewer.dart';
+import 'package:ybb_master_app/screens/reviewers/participant_abstract.dart';
+import 'package:ybb_master_app/screens/reviewers/reviewer_history_list.dart';
+import 'package:ybb_master_app/screens/reviewers/reviewer_personal_setting.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _shellNavigatorUserKey = GlobalKey<NavigatorState>(debugLabel: 'users');
@@ -169,6 +179,35 @@ class AppRouteConfig {
                       ambassador: state.extra as AmbassadorModel,
                     )),
                   ),
+
+                  //reviewers
+                  GoRoute(
+                    name: ReviewerList.routeName,
+                    path: ReviewerList.pathName,
+                    pageBuilder: (context, state) => const NoTransitionPage(
+                      child: ReviewerList(),
+                    ),
+                  ),
+                  GoRoute(
+                    name: ReviewerDetail.routeName,
+                    path: ReviewerDetail.pathName,
+                    pageBuilder: (context, state) => NoTransitionPage(
+                      child: ReviewerDetail(
+                        reviewer: state.extra as PaperReviewerModel,
+                      ),
+                    ),
+                  ),
+                  GoRoute(
+                    name: AddEditReviewer.routeName,
+                    path: AddEditReviewer.pathName,
+                    pageBuilder: (context, state) => NoTransitionPage(
+                      child: state.extra == null
+                          ? const AddEditReviewer()
+                          : AddEditReviewer(
+                              reviewer: state.extra as PaperReviewerModel,
+                            ),
+                    ),
+                  ),
                 ],
               ),
             ],
@@ -266,6 +305,26 @@ class AppRouteConfig {
                   child: Settings(),
                 ),
                 routes: [
+                  // paper topic
+                  GoRoute(
+                      name: PaperTopicList.routeName,
+                      path: PaperTopicList.pathName,
+                      pageBuilder: (context, state) =>
+                          const NoTransitionPage(child: PaperTopicList()),
+                      routes: [
+                        GoRoute(
+                          name: AddEditPaperTopic.routeName,
+                          path: AddEditPaperTopic.pathName,
+                          pageBuilder: (context, state) => NoTransitionPage(
+                              child: state.extra == null
+                                  ? const AddEditPaperTopic()
+                                  : AddEditPaperTopic(
+                                      paperTopic:
+                                          state.extra as PaperTopicModel,
+                                    )),
+                        ),
+                      ]),
+
                   GoRoute(
                       name: AppRouteConstants.paymentSettingRouteName,
                       path: AppRouteConstants.paymentSettingRoutePath,
@@ -474,10 +533,31 @@ class AppRouteConfig {
 
       // reviewer pages
       GoRoute(
-        name: ReviewerSignin.routeName,
-        path: ReviewerSignin.pathName,
+        name: DashboardReviewer.routeName,
+        path: DashboardReviewer.pathName,
         pageBuilder: (context, state) => const NoTransitionPage(
-          child: ReviewerSignin(),
+          child: DashboardReviewer(),
+        ),
+      ),
+      GoRoute(
+        name: ReviewerHistoryList.routeName,
+        path: ReviewerHistoryList.pathName,
+        pageBuilder: (context, state) => const NoTransitionPage(
+          child: ReviewerHistoryList(),
+        ),
+      ),
+      GoRoute(
+        name: ParticipantAbstractList.routeName,
+        path: ParticipantAbstractList.pathName,
+        pageBuilder: (context, state) => const NoTransitionPage(
+          child: ParticipantAbstractList(),
+        ),
+      ),
+      GoRoute(
+        name: ReviewerPersonalSetting.routeName,
+        path: ReviewerPersonalSetting.pathName,
+        pageBuilder: (context, state) => const NoTransitionPage(
+          child: ReviewerPersonalSetting(),
         ),
       ),
     ],

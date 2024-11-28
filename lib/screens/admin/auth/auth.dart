@@ -6,14 +6,16 @@ import 'package:ybb_master_app/core/helpers/common_helper.dart';
 import 'package:ybb_master_app/core/models/admin/admin_model.dart';
 import 'package:ybb_master_app/core/routes/route_constants.dart';
 import 'package:ybb_master_app/core/services/admin_service.dart';
+import 'package:ybb_master_app/core/services/paper_reviewer_service.dart';
 import 'package:ybb_master_app/core/services/program_category_service.dart';
 import 'package:ybb_master_app/core/services/program_service.dart';
 import 'package:ybb_master_app/core/widgets/common_methods.dart';
 import 'package:ybb_master_app/core/widgets/common_widgets.dart';
 import 'package:ybb_master_app/core/widgets/loading_widget.dart';
 import 'package:ybb_master_app/providers/admin_provider.dart';
+import 'package:ybb_master_app/providers/paper_provider.dart';
 import 'package:ybb_master_app/providers/program_provider.dart';
-import 'package:ybb_master_app/screens/reviewers/auth.dart';
+import 'package:ybb_master_app/screens/reviewers/dashboard_reviewer.dart';
 
 class Auth extends StatefulWidget {
   const Auth({super.key});
@@ -90,6 +92,28 @@ class _AuthState extends State<Auth> {
     }
   }
 
+  signInReviewer() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    String email = emailController.text;
+    String password = passwordController.text;
+
+    await PaperReviewerService().signIn(email, password).then((value) {
+      Provider.of<PaperProvider>(context, listen: false).currentReviewer =
+          value;
+
+      context.pushNamed(DashboardReviewer.routeName);
+    }).onError((error, stackTrace) {
+      setState(() {
+        isLoading = false;
+      });
+
+      CommonHelper().showError(context, error.toString());
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -98,12 +122,22 @@ class _AuthState extends State<Auth> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         // show a welcome image
-        SizedBox(
-          width: MediaQuery.of(context).size.width * 0.5,
-          child: Image.asset(
-            'assets/images/ybb_full_logo.png',
-            width: MediaQuery.of(context).size.width * 0.5,
-          ),
+        Stack(
+          alignment: Alignment.center,
+          children: [
+            Container(
+              color: Colors.blue,
+              width: MediaQuery.of(context).size.width * 0.5,
+              height: MediaQuery.of(context).size.height,
+            ),
+            Align(
+              alignment: Alignment.center,
+              child: Image.asset(
+                'assets/images/ybb_full_logo.png',
+                width: MediaQuery.of(context).size.width * 0.3,
+              ),
+            ),
+          ],
         ),
         SizedBox(
           width: MediaQuery.of(context).size.width * 0.5,
@@ -115,7 +149,7 @@ class _AuthState extends State<Auth> {
               children: [
                 // create a text with the text "Sign in" using the text widget and style it with a font size of 30 and bold
                 Text(
-                  'Welcome back, Admin!',
+                  'Welcome back!',
                   style: AppTextStyleConstants.headingTextStyle,
                 ),
                 const SizedBox(height: 30),
@@ -156,31 +190,41 @@ class _AuthState extends State<Auth> {
                             : CommonWidgets().buildCustomButton(
                                 width: double.infinity,
                                 color: Colors.blue,
-                                text: "Sign in",
+                                text: "Sign in as Admin",
                                 onPressed: () async {
+                                  if (emailController.text.isEmpty ||
+                                      passwordController.text.isEmpty) {
+                                    CommonHelper().showError(context,
+                                        "Please fill in all the fields");
+
+                                    return;
+                                  }
+
                                   setState(() {
                                     isLoading = true;
                                   });
 
-                                  String email = "ival@gmail.com";
-                                  String password = "123";
+                                  signIn();
 
-                                  await AdminService()
-                                      .login(email, password)
-                                      .then((value) {
-                                    setState(() {
-                                      isLoading = false;
-                                    });
+                                  // String email = "ival@gmail.com";
+                                  // String password = "123";
 
-                                    decideWhichAdmin(value);
-                                  }).onError((error, stackTrace) {
-                                    setState(() {
-                                      isLoading = false;
-                                    });
+                                  // await AdminService()
+                                  //     .login(email, password)
+                                  //     .then((value) {
+                                  //   setState(() {
+                                  //     isLoading = false;
+                                  //   });
 
-                                    CommonHelper()
-                                        .showError(context, error.toString());
-                                  });
+                                  //   decideWhichAdmin(value);
+                                  // }).onError((error, stackTrace) {
+                                  //   setState(() {
+                                  //     isLoading = false;
+                                  //   });
+
+                                  //   CommonHelper()
+                                  //       .showError(context, error.toString());
+                                  // });
                                 },
                               ),
                         const SizedBox(height: 20),
@@ -189,7 +233,19 @@ class _AuthState extends State<Auth> {
                           color: Colors.green,
                           text: "Sign in as Reviewer",
                           onPressed: () {
-                            context.pushNamed(ReviewerSignin.routeName);
+                            if (emailController.text.isEmpty ||
+                                passwordController.text.isEmpty) {
+                              CommonHelper().showError(
+                                  context, "Please fill in all the fields");
+
+                              return;
+                            }
+
+                            setState(() {
+                              isLoading = true;
+                            });
+
+                            signInReviewer();
                           },
                         ),
                       ],

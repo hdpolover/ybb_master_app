@@ -5,11 +5,13 @@ import 'package:ybb_master_app/core/models/program/program_model.dart';
 import 'package:ybb_master_app/core/models/program/program_category_model.dart';
 import 'package:ybb_master_app/core/models/program_certificate_model.dart';
 import 'package:ybb_master_app/core/models/program_document_model.dart';
+import 'package:ybb_master_app/core/models/program_info_by_url_model.dart';
 import 'package:ybb_master_app/core/models/program_payment_model.dart';
 import 'package:ybb_master_app/core/models/program_timeline_model.dart';
 
 class ProgramProvider extends ChangeNotifier {
   ProgramModel? _currentProgram;
+  ProgramInfoByUrlModel? _currentProgramInfo;
   List<ProgramModel> _programs = [];
   List<ProgramCategoryModel> _programCategories = [];
   List<ProgramPaymentModel>? _programPayments;
@@ -18,6 +20,23 @@ class ProgramProvider extends ChangeNotifier {
   List<ProgramDocumentModel>? _programDocuments;
   List<ProgramCertificateModel>? _programCertificates;
   List<DocumentBatchModel>? _documentBatches;
+
+  ProgramInfoByUrlModel? get currentProgramInfo => _currentProgramInfo;
+
+  set currentProgramInfo(ProgramInfoByUrlModel? currentProgramInfo) {
+    _currentProgramInfo = currentProgramInfo;
+    notifyListeners();
+  }
+
+  void updateCurrentProgramInfo(ProgramInfoByUrlModel programInfo) {
+    _currentProgramInfo = programInfo;
+    notifyListeners();
+  }
+
+  void removeCurrentProgramInfo() {
+    _currentProgramInfo = null;
+    notifyListeners();
+  }
 
   List<DocumentBatchModel>? get documentBatches => _documentBatches;
 

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:ybb_master_app/core/models/program/program_category_model.dart';
 import 'package:ybb_master_app/core/models/program/program_model.dart';
+import 'package:ybb_master_app/core/services/program_service.dart';
 import 'package:ybb_master_app/core/widgets/common_methods.dart';
 import 'package:ybb_master_app/providers/program_provider.dart';
 
@@ -21,9 +23,25 @@ class ProgramTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
+      onTap: () async {
         Provider.of<ProgramProvider>(context, listen: false).currentProgram =
             program;
+
+        List<ProgramCategoryModel> programCategories =
+            Provider.of<ProgramProvider>(context, listen: false)
+                .programCategories;
+
+// get program website url
+        for (ProgramCategoryModel programCategory in programCategories) {
+          if (program.programCategoryId == programCategory.id) {
+            await ProgramService()
+                .getProgramInfo(programCategory.webUrl!)
+                .then((value) {
+              Provider.of<ProgramProvider>(context, listen: false)
+                  .currentProgramInfo = value;
+            });
+          }
+        }
 
         context.push('/dashboard');
       },

@@ -3,7 +3,8 @@ import 'package:ybb_master_app/core/widgets/common_widgets.dart';
 
 class CommonDialog {
   static void showAlertDialog(
-      BuildContext context, String title, String message) {
+      BuildContext context, String title, String message,
+      {bool isError = false, Function()? onConfirm}) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -11,17 +12,18 @@ class CommonDialog {
           contentPadding: const EdgeInsets.all(20),
           title: Text(title),
           content: Text(message),
-          icon: const Icon(
+          icon: Icon(
             Icons.info,
             size: 30,
-            color: Colors.blue,
+            color: isError ? Colors.red : Colors.blue,
           ),
           actions: [
             CommonWidgets().buildCustomButton(
               text: "OK",
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
+              onPressed: onConfirm ??
+                  () {
+                    Navigator.of(context).pop();
+                  },
             ),
           ],
         );

@@ -7,6 +7,7 @@ import 'package:ybb_master_app/providers/admin_provider.dart';
 import 'package:ybb_master_app/providers/ambassador_provider.dart';
 import 'package:ybb_master_app/providers/dashboard_provider.dart';
 import 'package:ybb_master_app/providers/faq_provider.dart';
+import 'package:ybb_master_app/providers/paper_provider.dart';
 import 'package:ybb_master_app/providers/participant_provider.dart';
 import 'package:ybb_master_app/providers/payment_provider.dart';
 import 'package:ybb_master_app/providers/program_announcement_provider.dart';
@@ -42,6 +43,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider<FaqProvider>(
           create: (context) => FaqProvider(),
+        ),
+        ChangeNotifierProvider<PaperProvider>(
+          create: (context) => PaperProvider(),
         ),
       ],
       child: ResponsiveSizer(builder: (context, orientation, screenType) {

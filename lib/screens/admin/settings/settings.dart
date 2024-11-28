@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:ybb_master_app/core/routes/route_constants.dart';
 import 'package:ybb_master_app/core/widgets/common_app_bar.dart';
 import 'package:ybb_master_app/core/widgets/menu_card.dart';
+import 'package:ybb_master_app/providers/program_provider.dart';
+import 'package:ybb_master_app/screens/admin/settings/paper_program_details/paper_program_detail.dart';
+import 'package:ybb_master_app/screens/admin/settings/paper_topics/paper_topic_list.dart';
 
 class Settings extends StatefulWidget {
   const Settings({super.key});
@@ -12,6 +16,27 @@ class Settings extends StatefulWidget {
 }
 
 class _SettingsState extends State<Settings> {
+  bool isPaperProgram = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    check();
+  }
+
+  check() {
+    //check if the program is a paper program
+    if (Provider.of<ProgramProvider>(context, listen: false)
+            .currentProgramInfo!
+            .programTypeId ==
+        "3") {
+      setState(() {
+        isPaperProgram = true;
+      });
+    }
+  }
+
   List<MenuCard> menuCards = [
     const MenuCard(
       title: "Landing Page",
@@ -44,8 +69,28 @@ class _SettingsState extends State<Settings> {
       routeName: AppRouteConstants.programCertificateRouteName,
     ),
   ];
+
+  List<MenuCard> paperMenuCards = [
+    const MenuCard(
+      title: "Paper Topics",
+      icon: FontAwesomeIcons.book,
+      routeName: PaperTopicList.routeName,
+    ),
+    const MenuCard(
+      title: "Paper Program Details",
+      icon: FontAwesomeIcons.info,
+      routeName: PaperProgramDetail.routeName,
+    ),
+  ];
+
   @override
   Widget build(BuildContext context) {
+    List<MenuCard> allMenuCards = menuCards;
+
+    if (isPaperProgram) {
+      allMenuCards.addAll(paperMenuCards);
+    }
+
     return Scaffold(
       appBar: const CommonAppBar(
         title: "Settings",
@@ -59,9 +104,9 @@ class _SettingsState extends State<Settings> {
             crossAxisSpacing: 10,
             mainAxisSpacing: 10,
           ),
-          itemCount: menuCards.length,
+          itemCount: allMenuCards.length,
           itemBuilder: (context, index) {
-            return menuCards[index];
+            return allMenuCards[index];
           },
         ),
       ),
