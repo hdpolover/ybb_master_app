@@ -36,21 +36,20 @@ class _AmbassadorDetailState extends State<AmbassadorDetail> {
   }
 
   buildParticipantSection() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const SizedBox(height: 20),
-        Text("List of Participants",
-            style: AppTextStyleConstants.headingTextStyle
-                .copyWith(fontSize: 20, fontWeight: FontWeight.bold)),
-        const SizedBox(height: 20),
-        participants.isEmpty
-            ? Text("No participants referred yet",
-                style: AppTextStyleConstants.bodyTextStyle)
-            : SizedBox(
-                height: MediaQuery.of(context).size.height * 0.4,
-                child: ListView.builder(
+    return Expanded(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 20),
+          Text("List of Participants",
+              style: AppTextStyleConstants.headingTextStyle
+                  .copyWith(fontSize: 20, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 20),
+          participants.isEmpty
+              ? Text("No participants referred yet",
+                  style: AppTextStyleConstants.bodyTextStyle)
+              : ListView.builder(
                   shrinkWrap: true,
                   itemCount: participants.length,
                   itemBuilder: (context, index) {
@@ -61,8 +60,8 @@ class _AmbassadorDetailState extends State<AmbassadorDetail> {
                     );
                   },
                 ),
-              ),
-      ],
+        ],
+      ),
     );
   }
 

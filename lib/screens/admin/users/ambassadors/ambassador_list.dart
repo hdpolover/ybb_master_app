@@ -7,6 +7,7 @@ import 'package:ybb_master_app/core/routes/route_constants.dart';
 import 'package:ybb_master_app/core/services/ambassador_service.dart';
 import 'package:ybb_master_app/core/services/payment_service.dart';
 import 'package:ybb_master_app/core/widgets/common_app_bar.dart';
+import 'package:ybb_master_app/core/widgets/loading_widget.dart';
 import 'package:ybb_master_app/providers/payment_provider.dart';
 import 'package:ybb_master_app/providers/program_provider.dart';
 import 'package:ybb_master_app/screens/admin/users/widgets/ambassador_preview_widget.dart';
@@ -24,6 +25,8 @@ class _AmbassadorListState extends State<AmbassadorList> {
   List<AmbassadorModel> ambassadors = [];
 
   Map<String, List<ParticipantModel>> participants = {};
+
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -46,6 +49,10 @@ class _AmbassadorListState extends State<AmbassadorList> {
   }
 
   getAmbass() async {
+    setState(() {
+      isLoading = true;
+    });
+
     String programId = Provider.of<ProgramProvider>(context, listen: false)
         .currentProgram!
         .id
@@ -62,14 +69,16 @@ class _AmbassadorListState extends State<AmbassadorList> {
         });
 
         for (var amb in ambassadors) {
+          if (amb.refCode == null) {
+            continue;
+          }
+
           await AmbassadorService()
               .getReferredParticipants(amb.refCode!)
               .then((value) {
             participants[amb.refCode!] = value;
           });
         }
-
-        setState(() {});
 
         // sort the ambassadors based on the number of participants
         ambassadors.sort((a, b) {
@@ -79,6 +88,10 @@ class _AmbassadorListState extends State<AmbassadorList> {
         });
 
         ambProvider.ambassadors = ambassadors;
+
+        isLoading = false;
+
+        setState(() {});
       });
     }
   }
@@ -97,27 +110,32 @@ class _AmbassadorListState extends State<AmbassadorList> {
         child: const Icon(Icons.add),
       ),
       body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // buildFilterSection(),
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.8,
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: ambassadorProvider.ambassadors.isEmpty
-                  ? const Center(child: Text("No ambassadors to be shown"))
-                  : ListView.builder(
-                      itemCount: ambassadorProvider.ambassadors.length,
-                      padding: const EdgeInsets.all(8),
-                      itemBuilder: (context, index) {
-                        return AmbassadorPreviewWidget(
-                            ambassador: ambassadorProvider.ambassadors[index],
-                            participants: participants[ambassadorProvider
-                                    .ambassadors[index].refCode!] ??
-                                []);
-                      },
-                    ),
-            ),
-          )
+          isLoading
+              ? const Center(child: LoadingWidget())
+              : SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.8,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: ambassadorProvider.ambassadors.isEmpty
+                        ? const Center(
+                            child: Text("No ambassadors to be shown"))
+                        : ListView.builder(
+                            itemCount: ambassadorProvider.ambassadors.length,
+                            padding: const EdgeInsets.all(8),
+                            itemBuilder: (context, index) {
+                              return AmbassadorPreviewWidget(
+                                  ambassador:
+                                      ambassadorProvider.ambassadors[index],
+                                  participants: participants[ambassadorProvider
+                                          .ambassadors[index].refCode!] ??
+                                      []);
+                            },
+                          ),
+                  ),
+                )
         ],
       ),
     );

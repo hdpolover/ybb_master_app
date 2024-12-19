@@ -80,6 +80,8 @@ class _ParticipantTileState extends State<ParticipantTile> {
   Widget build(BuildContext context) {
     // create a card for each participant
     return Card(
+      surfaceTintColor: Colors.white,
+      color: Colors.white,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10),
       ),
