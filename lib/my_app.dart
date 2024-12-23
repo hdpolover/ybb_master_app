@@ -12,6 +12,7 @@ import 'package:ybb_master_app/providers/participant_provider.dart';
 import 'package:ybb_master_app/providers/payment_provider.dart';
 import 'package:ybb_master_app/providers/program_announcement_provider.dart';
 import 'package:ybb_master_app/providers/program_provider.dart';
+import 'package:ybb_master_app/providers/reviewer_paper_provider.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -46,6 +47,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider<PaperProvider>(
           create: (context) => PaperProvider(),
+        ),
+        ChangeNotifierProvider<ReviewerPaperProvider>(
+          create: (context) => ReviewerPaperProvider(),
         ),
       ],
       child: ResponsiveSizer(builder: (context, orientation, screenType) {

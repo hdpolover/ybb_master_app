@@ -13,6 +13,10 @@ class ReviewerHistoryList extends StatefulWidget {
 class _ReviewerHistoryListState extends State<ReviewerHistoryList> {
   @override
   Widget build(BuildContext context) {
-    return Container();
+    Widget content = Center(
+      child: Text("No data available"),
+    );
+
+    return content;
   }
 }

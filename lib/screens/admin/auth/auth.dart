@@ -30,6 +30,13 @@ class _AuthState extends State<Auth> {
 
   bool isLoading = false;
 
+  @override
+  void initState() {
+    super.initState();
+
+    getProgramData();
+  }
+
   getProgramData() async {
     try {
       await ProgramCategoryService().getAll().then((value) async {
@@ -47,8 +54,6 @@ class _AuthState extends State<Auth> {
 
   decideWhichAdmin(AdminModel admin) {
     Provider.of<AdminProvider>(context, listen: false).currentAdmin = admin;
-
-    getProgramData();
 
     switch (admin.role) {
       case 'super':
@@ -100,9 +105,17 @@ class _AuthState extends State<Auth> {
     String email = emailController.text;
     String password = passwordController.text;
 
-    await PaperReviewerService().signIn(email, password).then((value) {
+    await PaperReviewerService().signIn(email, password).then((value) async {
       Provider.of<PaperProvider>(context, listen: false).currentReviewer =
           value;
+
+      for (var program
+          in Provider.of<ProgramProvider>(context, listen: false).programs) {
+        if (value.programId == program.id) {
+          Provider.of<ProgramProvider>(context, listen: false).currentProgram =
+              program;
+        }
+      }
 
       context.pushNamed(DashboardReviewer.routeName);
     }).onError((error, stackTrace) {
@@ -238,7 +251,7 @@ class _AuthState extends State<Auth> {
                               CommonHelper().showError(
                                   context, "Please fill in all the fields");
 
-                              return;
+                              // return;
                             }
 
                             setState(() {
@@ -251,7 +264,7 @@ class _AuthState extends State<Auth> {
                             //   passwordController.text = "hendra123@";
                             // });
 
-                            // signInReviewer();
+                            signInReviewer();
                           },
                         ),
                       ],
