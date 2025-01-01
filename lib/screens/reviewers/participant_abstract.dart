@@ -19,7 +19,7 @@ class ParticipantAbstractList extends StatefulWidget {
 }
 
 class _ParticipantAbstractListState extends State<ParticipantAbstractList> {
-  int _rowsPerPage = PaginatedDataTable.defaultRowsPerPage;
+  int _rowsPerPage = 5;
   bool _sortAscending = true;
   int? _sortColumnIndex;
   late ReviewerDataTableSource _reviewerDataTableSource;
@@ -64,20 +64,22 @@ class _ParticipantAbstractListState extends State<ParticipantAbstractList> {
 
   List<DataColumn> get _columns {
     return [
-      const DataColumn(
+      const DataColumn2(
+        fixedWidth: 50,
         label: Text('No.'),
         // onSort: (columnIndex, ascending) =>
         //     sort<String>((d) => d., columnIndex, ascending),
       ),
-      DataColumn(
-        label: const Text('Name(s)'),
-        onSort: (columnIndex, ascending) {
-          String mergedNames = _reviewerDataTableSource.mergeAuthorNames(
-              _reviewerDataTableSource.papers![0].paperAuthors);
-          sort<String>((d) => mergedNames, columnIndex, ascending);
-        },
-      ),
-      DataColumn(
+      DataColumn2(
+          label: const Text('Name(s)'),
+          onSort: (columnIndex, ascending) {
+            String mergedNames = _reviewerDataTableSource.mergeAuthorNames(
+                _reviewerDataTableSource.papers![0].paperAuthors);
+            sort<String>((d) => mergedNames, columnIndex, ascending);
+          },
+          size: ColumnSize.L),
+      DataColumn2(
+        size: ColumnSize.L,
         label: const Text('Email(s)'),
         onSort: (columnIndex, ascending) {
           String mergedEmails = _reviewerDataTableSource.mergeAuthorEmails(
@@ -85,28 +87,29 @@ class _ParticipantAbstractListState extends State<ParticipantAbstractList> {
           sort<String>((d) => mergedEmails, columnIndex, ascending);
         },
       ),
-      DataColumn(
+      DataColumn2(
+        size: ColumnSize.L,
         label: const Text('Topic'),
         onSort: (columnIndex, ascending) => sort<num>(
             (d) => d.paperDetail!.paperTopicId!, columnIndex, ascending),
       ),
-      DataColumn(
+      DataColumn2(
+        size: ColumnSize.L,
         label: const Text('Title'),
         onSort: (columnIndex, ascending) => sort<String>(
             (d) => d.paperAbstract!.title!, columnIndex, ascending),
       ),
-      const DataColumn(
+      const DataColumn2(
         label: Text('Status'),
         // onSort: (columnIndex, ascending) =>
         //     sort<num>((d) => d.carbs, columnIndex, ascending),
       ),
-      DataColumn(
+      DataColumn2(
         label: const Text('Last Edit'),
-        numeric: true,
         onSort: (columnIndex, ascending) => sort<DateTime>(
             (d) => d.paperDetail!.updatedAt!, columnIndex, ascending),
       ),
-      const DataColumn(
+      const DataColumn2(
         label: Text('Actions'),
       ),
     ];
@@ -115,6 +118,7 @@ class _ParticipantAbstractListState extends State<ParticipantAbstractList> {
   @override
   Widget build(BuildContext context) {
     var reviewerDataProvider = Provider.of<ReviewerPaperProvider>(context);
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
       child: Stack(
@@ -134,9 +138,8 @@ class _ParticipantAbstractListState extends State<ParticipantAbstractList> {
             // ],
             // 100 Won't be shown since it is smaller than total records
             availableRowsPerPage: const [2, 5, 10, 30, 100],
-            horizontalMargin: 20,
             checkboxHorizontalMargin: 12,
-            columnSpacing: 0,
+            horizontalMargin: 12,
             wrapInCard: false,
             renderEmptyRowsInTheEnd: false,
             headingRowColor:
@@ -161,8 +164,7 @@ class _ParticipantAbstractListState extends State<ParticipantAbstractList> {
             // ),
             rowsPerPage: _rowsPerPage,
             autoRowsToHeight: getCurrentRouteOption(context) == autoRows,
-            minWidth: 800,
-            fit: FlexFit.tight,
+            fit: FlexFit.loose,
             border: TableBorder(
                 top: const BorderSide(color: Colors.black),
                 bottom: BorderSide(color: Colors.grey[300]!),
@@ -194,11 +196,9 @@ class _ParticipantAbstractListState extends State<ParticipantAbstractList> {
                 : null,
             hidePaginator: getCurrentRouteOption(context) == custPager,
             columns: _columns,
-            empty: Center(
-                child: Container(
-                    padding: const EdgeInsets.all(20),
-                    color: Colors.grey[200],
-                    child: const Text('No data'))),
+            empty: const Center(
+                child: Text('No data submitted yet',
+                    style: TextStyle(color: Colors.red))),
             source: getCurrentRouteOption(context) == noData
                 ? ReviewerDataTableSource.empty(context)
                 : ReviewerDataTableSource(

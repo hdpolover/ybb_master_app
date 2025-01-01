@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:ybb_master_app/core/constants/text_style_constants.dart';
 import 'package:ybb_master_app/core/widgets/common_dialog.dart';
 import 'package:ybb_master_app/core/widgets/common_methods.dart';
 import 'package:ybb_master_app/core/widgets/common_widgets.dart';
-import 'package:ybb_master_app/providers/payment_provider.dart';
 import 'package:ybb_master_app/screens/admin/payments/payments.dart';
 
 class PaymentFilterDialog extends StatefulWidget {

@@ -12,6 +12,8 @@ class ProgramPaymentMethodService {
   Future<List<PaymentMethodModel>> getAll(String programId) async {
     var url = Uri.parse('$baseUrl/list?program_id=$programId');
 
+    print(url);
+
     try {
       var response = await http.get(url);
 

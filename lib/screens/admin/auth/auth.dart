@@ -9,7 +9,6 @@ import 'package:ybb_master_app/core/services/admin_service.dart';
 import 'package:ybb_master_app/core/services/paper_reviewer_service.dart';
 import 'package:ybb_master_app/core/services/program_category_service.dart';
 import 'package:ybb_master_app/core/services/program_service.dart';
-import 'package:ybb_master_app/core/widgets/common_methods.dart';
 import 'package:ybb_master_app/core/widgets/common_widgets.dart';
 import 'package:ybb_master_app/core/widgets/loading_widget.dart';
 import 'package:ybb_master_app/providers/admin_provider.dart';
@@ -98,10 +97,6 @@ class _AuthState extends State<Auth> {
   }
 
   signInReviewer() async {
-    setState(() {
-      isLoading = true;
-    });
-
     String email = emailController.text;
     String password = passwordController.text;
 
@@ -116,6 +111,10 @@ class _AuthState extends State<Auth> {
               program;
         }
       }
+
+      setState(() {
+        isLoading = false;
+      });
 
       context.pushNamed(DashboardReviewer.routeName);
     }).onError((error, stackTrace) {
@@ -251,7 +250,7 @@ class _AuthState extends State<Auth> {
                               CommonHelper().showError(
                                   context, "Please fill in all the fields");
 
-                              // return;
+                              return;
                             }
 
                             setState(() {
@@ -260,8 +259,8 @@ class _AuthState extends State<Auth> {
 
                             // setState(() {
                             //   isLoading = true;
-                            //   emailController.text = "hendra@email.com";
-                            //   passwordController.text = "hendra123@";
+                            //   emailController.text = "super@email.com";
+                            //   passwordController.text = "super";
                             // });
 
                             signInReviewer();

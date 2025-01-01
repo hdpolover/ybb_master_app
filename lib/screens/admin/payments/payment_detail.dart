@@ -201,9 +201,74 @@ class _PaymentDetailState extends State<PaymentDetail> {
     );
   }
 
+  buildCancelButton() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 20),
+      child: Center(
+        child: isLoading
+            ? const Text("Now Loading...")
+            : ElevatedButton(
+                onPressed: () async {
+                  setState(() {
+                    isLoading = true;
+                  });
+
+                  await PaymentService()
+                      .updateStatus(widget.payment.id!, "3")
+                      .then((value) async {
+                    if (value) {
+                      String programId =
+                          Provider.of<ProgramProvider>(context, listen: false)
+                              .currentProgram!
+                              .id!;
+
+                      await PaymentService().getAll(programId).then((value) {
+                        setState(() {
+                          isLoading = false;
+                        });
+
+                        Provider.of<PaymentProvider>(context, listen: false)
+                            .payments = value;
+
+                        CommonHelper().showSimpleOkDialog(context,
+                            "Data updated", "Payment has been cancelled", () {
+                          Navigator.of(context, rootNavigator: true).pop();
+                          Navigator.pop(context);
+                        });
+                      });
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text("Failed to cancel payment"),
+                        ),
+                      );
+                    }
+                  });
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  minimumSize:
+                      Size(MediaQuery.of(context).size.width * 0.3, 60),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                ),
+                child: const Text(
+                  'Cancel',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: const CommonAppBar(title: "Payment Details"),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
@@ -310,7 +375,7 @@ class _PaymentDetailState extends State<PaymentDetail> {
                 ],
               ),
               widget.payment.status == "2"
-                  ? const SizedBox.shrink()
+                  ? buildCancelButton()
                   : buildButtons(),
             ],
           ),

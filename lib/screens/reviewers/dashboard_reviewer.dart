@@ -4,9 +4,11 @@ import 'package:ybb_master_app/core/models/paper_abstract_model.dart';
 import 'package:ybb_master_app/core/models/paper_author_model.dart';
 import 'package:ybb_master_app/core/models/paper_detail_model.dart';
 import 'package:ybb_master_app/core/models/paper_reviewer_model.dart';
+import 'package:ybb_master_app/core/models/paper_revision_model.dart';
 import 'package:ybb_master_app/core/services/paper_abstract_service.dart';
 import 'package:ybb_master_app/core/services/paper_author_service.dart';
 import 'package:ybb_master_app/core/services/paper_detail_service.dart';
+import 'package:ybb_master_app/core/services/paper_revision_service.dart';
 import 'package:ybb_master_app/core/services/paper_topic_service.dart';
 import 'package:ybb_master_app/core/widgets/common_app_bar.dart';
 import 'package:ybb_master_app/providers/paper_provider.dart';
@@ -17,6 +19,7 @@ import 'package:ybb_master_app/screens/reviewers/reviewer_history_list.dart';
 
 class ReviewerPaperData {
   List<PaperAuthorModel> paperAuthors = [];
+  List<PaperRevisionModel> paperRevisions = [];
   PaperDetailModel? paperDetail;
   PaperAbstractModel? paperAbstract;
 
@@ -24,6 +27,7 @@ class ReviewerPaperData {
     required this.paperAuthors,
     required this.paperDetail,
     required this.paperAbstract,
+    required this.paperRevisions,
   });
 }
 
@@ -69,7 +73,6 @@ class _DashboardReviewerState extends State<DashboardReviewer> {
   }
 
   getData() async {
-    print("Getting data...");
     String? programId =
         Provider.of<ProgramProvider>(context, listen: false).currentProgram!.id;
 
@@ -77,6 +80,7 @@ class _DashboardReviewerState extends State<DashboardReviewer> {
 
     List<PaperDetailModel> tempDetails = [];
     List<PaperAbstractModel> tempAbstracts = [];
+    List<PaperRevisionModel> tempRevisions = [];
 
     List<ReviewerPaperData> tempData = [];
 
@@ -85,39 +89,56 @@ class _DashboardReviewerState extends State<DashboardReviewer> {
 
       print("tempdetails: " + tempDetails.length.toString());
 
-      await PaperAbstractService().getAll(programId).then((abstracts) async {
-        tempAbstracts = abstracts!;
+      await PaperRevisionService().getAll().then((revisions) async {
+        tempRevisions = revisions!;
 
-        print("tempabstracts: " + tempAbstracts.length.toString());
+        await PaperAbstractService().getAll(programId).then((abstracts) async {
+          tempAbstracts = abstracts!;
 
-        for (var item in tempDetails) {
-          if (item.paperAbstractId != null && item.paperTopicId != null) {
-            print("Paper ID: ${item.id}");
-            PaperAbstractModel? matchingAbstract;
+          print("tempabstracts: " + tempAbstracts.length.toString());
 
-            await PaperAuthorService().getAll(item.id).then((authors) {
-              for (var abstract in tempAbstracts) {
-                if (abstract.id == item.paperAbstractId) {
-                  matchingAbstract = abstract;
+          for (var item in tempDetails) {
+            if (item.paperAbstractId != null && item.paperTopicId != null) {
+              print("Paper ID: ${item.id}");
+              PaperAbstractModel? matchingAbstract;
+
+              await PaperAuthorService().getAll(item.id).then((authors) {
+                for (var abstract in tempAbstracts) {
+                  if (abstract.id == item.paperAbstractId) {
+                    matchingAbstract = abstract;
+                  }
                 }
-              }
 
-              ReviewerPaperData data = ReviewerPaperData(
-                paperAuthors: authors!,
-                paperDetail: item,
-                paperAbstract: matchingAbstract,
-              );
+                List<PaperRevisionModel> matchingRevisions = [];
 
-              tempData.add(data);
+                for (var revision in tempRevisions) {
+                  if (revision.paperDetailId == item.id) {
+                    matchingRevisions.add(revision);
+                  }
+                }
 
-              setState(() {
-                isLoading = false;
+                ReviewerPaperData data = ReviewerPaperData(
+                  paperAuthors: authors!,
+                  paperDetail: item,
+                  paperAbstract: matchingAbstract,
+                  paperRevisions: matchingRevisions,
+                );
+
+                tempData.add(data);
+
+                setState(() {
+                  isLoading = false;
+                });
+              }).onError((error, stackTrace) {
+                print("Error: $error");
               });
-            }).onError((error, stackTrace) {
-              print("Error: $error");
-            });
+            }
           }
-        }
+        }).onError((error, stackTrace) {
+          print("Error: $error");
+        });
+
+        print("temprevisions: " + tempRevisions.length.toString());
       }).onError((error, stackTrace) {
         print("Error: $error");
       });
@@ -137,6 +158,13 @@ class _DashboardReviewerState extends State<DashboardReviewer> {
               .paperTopicId);
     }
 
+    // remove duplicates by paper detail id
+    tempData.removeWhere((element) {
+      var ids = tempData.map((e) => e.paperDetail!.id).toList();
+      return ids.indexOf(element.paperDetail!.id) !=
+          ids.lastIndexOf(element.paperDetail!.id);
+    });
+
     Provider.of<ReviewerPaperProvider>(context, listen: false)
         .reviewerPaperData = tempData;
   }
@@ -144,6 +172,16 @@ class _DashboardReviewerState extends State<DashboardReviewer> {
   buildProfileSummary() {
     PaperReviewerModel reviewer =
         Provider.of<PaperProvider>(context, listen: false).currentReviewer!;
+
+    var topics = Provider.of<PaperProvider>(context, listen: false).paperTopics;
+
+    String topicName = "";
+
+    for (var topic in topics) {
+      if (topic.id == reviewer.paperTopicId) {
+        topicName = topic.topicName!;
+      }
+    }
 
     return Container(
       width: MediaQuery.sizeOf(context).width * 0.3,
@@ -175,7 +213,7 @@ class _DashboardReviewerState extends State<DashboardReviewer> {
           ),
           const SizedBox(height: 10),
           Text(
-            "Assigned Topic: ${reviewer.paperTopicId}",
+            "Assigned Topic: $topicName",
             style: const TextStyle(
               fontSize: 16,
             ),
@@ -198,7 +236,7 @@ class _DashboardReviewerState extends State<DashboardReviewer> {
                   text: "Abstracts",
                 ),
                 Tab(
-                  text: "Comment History",
+                  text: "Revision History",
                 ),
               ],
             ),

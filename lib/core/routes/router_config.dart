@@ -61,7 +61,9 @@ import 'package:ybb_master_app/screens/admin/users/reviewers/reviewer_detail.dar
 import 'package:ybb_master_app/screens/admin/users/reviewers/reviewer_list.dart';
 import 'package:ybb_master_app/screens/admin/users/users_page.dart';
 import 'package:ybb_master_app/screens/admin/welcome/welcome.dart';
+import 'package:ybb_master_app/screens/reviewers/add_revision.dart';
 import 'package:ybb_master_app/screens/reviewers/dashboard_reviewer.dart';
+import 'package:ybb_master_app/screens/reviewers/paper_detail_page.dart';
 import 'package:ybb_master_app/screens/reviewers/participant_abstract.dart';
 import 'package:ybb_master_app/screens/reviewers/reviewer_history_list.dart';
 import 'package:ybb_master_app/screens/reviewers/reviewer_personal_setting.dart';
@@ -558,6 +560,22 @@ class AppRouteConfig {
         path: ReviewerPersonalSetting.pathName,
         pageBuilder: (context, state) => const NoTransitionPage(
           child: ReviewerPersonalSetting(),
+        ),
+      ),
+      GoRoute(
+        name: PaperDetailPage.routeName,
+        path: PaperDetailPage.pathName,
+        pageBuilder: (context, state) => NoTransitionPage(
+          child: PaperDetailPage(
+            reviewerPaperData: state.extra as ReviewerPaperData,
+          ),
+        ),
+      ),
+      GoRoute(
+        name: AddRevision.routeName,
+        path: AddRevision.pathName,
+        pageBuilder: (context, state) => const NoTransitionPage(
+          child: AddRevision(),
         ),
       ),
     ],
