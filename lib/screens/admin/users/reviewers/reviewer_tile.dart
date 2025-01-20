@@ -3,7 +3,8 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:ybb_master_app/core/constants/text_style_constants.dart';
 import 'package:ybb_master_app/core/models/paper_reviewer_model.dart';
-import 'package:ybb_master_app/core/routes/router_config.dart';
+import 'package:ybb_master_app/core/models/paper_reviewer_topic_model.dart';
+import 'package:ybb_master_app/core/models/paper_topic_model.dart';
 import 'package:ybb_master_app/core/services/paper_reviewer_service.dart';
 import 'package:ybb_master_app/core/widgets/common_widgets.dart';
 import 'package:ybb_master_app/providers/paper_provider.dart';
@@ -13,14 +14,36 @@ class ReviewerTile extends StatelessWidget {
   final PaperReviewerModel reviewer;
   const ReviewerTile({super.key, required this.reviewer});
 
+  getTopicNames(List<PaperTopicModel> topics,
+      List<PaperReviewerTopicModel> reviewerTopics) {
+    List<String> topicNames = [];
+
+    for (var element in reviewerTopics) {
+      String? topicName = topics
+          .firstWhere((topic) => topic.id == element.paperTopicId)
+          .topicName;
+
+      // add the topic name to the list and separate them with commas
+      topicNames.add(topicName!);
+    }
+
+    String topicName = topicNames.join(", ");
+
+    return topicNames.isEmpty
+        ? "No assigned topics yet"
+        : "${topicNames.length} Assigned topics: $topicName";
+  }
+
   @override
   Widget build(BuildContext context) {
     var paperProvider = Provider.of<PaperProvider>(context);
 
-    String? topicName = paperProvider.paperTopics
-            .firstWhere((element) => element.id == reviewer.paperTopicId)
-            .topicName ??
-        "-";
+    List<PaperReviewerTopicModel> reviewerTopics = paperProvider.reviewerTopics
+        .where((element) => element.paperReviewerId == reviewer.id)
+        .toList();
+
+    String topicName = getTopicNames(paperProvider.paperTopics, reviewerTopics);
+
     // make a card for each reviewer
     return Card(
         surfaceTintColor: Colors.white,
@@ -52,8 +75,11 @@ class ReviewerTile extends StatelessWidget {
                     ),
                     const SizedBox(height: 5),
                     Text(
-                      topicName ?? "-",
-                      style: AppTextStyleConstants.bodyTextStyle,
+                      topicName,
+                      style: AppTextStyleConstants.bodyTextStyle.copyWith(
+                        fontSize: 12,
+                        fontStyle: FontStyle.italic,
+                      ),
                     ),
                   ],
                 ),

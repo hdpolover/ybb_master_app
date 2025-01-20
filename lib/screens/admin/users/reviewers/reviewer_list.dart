@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:ybb_master_app/core/models/paper_reviewer_model.dart';
 import 'package:ybb_master_app/core/models/paper_topic_model.dart';
+import 'package:ybb_master_app/core/services/paper_reviewer_topic_service.dart';
 import 'package:ybb_master_app/core/services/paper_topic_service.dart';
 import 'package:ybb_master_app/core/widgets/common_app_bar.dart';
 import 'package:ybb_master_app/providers/paper_provider.dart';
@@ -37,8 +38,14 @@ class _ReviewerListState extends State<ReviewerList> {
           .currentProgram!
           .id!;
 
-      await PaperTopicService().getAll(programId).then((value) {
+      await PaperTopicService().getAll(programId).then((value) async {
         Provider.of<PaperProvider>(context, listen: false).paperTopics = value;
+
+        // get reviewer topics
+        await PaperReviewerTopicService().getAll().then((value) {
+          Provider.of<PaperProvider>(context, listen: false).reviewerTopics =
+              value;
+        });
       });
     }
   }

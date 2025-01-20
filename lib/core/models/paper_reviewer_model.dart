@@ -12,13 +12,11 @@ String paperReviewerModelToJson(PaperReviewerModel data) =>
 
 class PaperReviewerModel {
   String? id;
-  String? paperTopicId;
   String? programId;
   String? name;
   String? email;
   String? institution;
   String? password;
-  String? topicAccess;
   String? isActive;
   String? isDeleted;
   DateTime? createdAt;
@@ -26,29 +24,31 @@ class PaperReviewerModel {
 
   PaperReviewerModel({
     this.id,
-    this.paperTopicId,
     this.programId,
     this.name,
     this.email,
     this.institution,
     this.password,
-    this.topicAccess,
     this.isActive,
     this.isDeleted,
     this.createdAt,
     this.updatedAt,
   });
 
+  // to string
+  @override
+  String toString() {
+    return 'PaperReviewerModel{id: $id, programId: $programId, name: $name, email: $email, institution: $institution, password: $password, isActive: $isActive, isDeleted: $isDeleted, createdAt: $createdAt, updatedAt: $updatedAt}';
+  }
+
   factory PaperReviewerModel.fromJson(Map<String, dynamic> json) =>
       PaperReviewerModel(
         id: json["id"],
-        paperTopicId: json["paper_topic_id"],
         programId: json["program_id"],
         name: json["name"],
         email: json["email"],
         institution: json["institution"],
         password: json["password"],
-        topicAccess: json["topic_access"],
         isActive: json["is_active"],
         isDeleted: json["is_deleted"],
         createdAt: json["created_at"] == null
@@ -60,12 +60,10 @@ class PaperReviewerModel {
       );
 
   Map<String, dynamic> toJson() => {
-        "paper_topic_id": paperTopicId,
         "program_id": programId,
         "name": name,
         "email": email,
         "institution": institution,
         "password": password,
-        "topic_access": topicAccess,
       };
 }

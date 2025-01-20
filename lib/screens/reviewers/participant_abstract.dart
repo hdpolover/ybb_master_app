@@ -107,7 +107,7 @@ class _ParticipantAbstractListState extends State<ParticipantAbstractList> {
       DataColumn2(
         label: const Text('Last Edit'),
         onSort: (columnIndex, ascending) => sort<DateTime>(
-            (d) => d.paperDetail!.updatedAt!, columnIndex, ascending),
+            (d) => d.paperAbstract!.updatedAt!, columnIndex, ascending),
       ),
       const DataColumn2(
         label: Text('Actions'),
@@ -118,6 +118,12 @@ class _ParticipantAbstractListState extends State<ParticipantAbstractList> {
   @override
   Widget build(BuildContext context) {
     var reviewerDataProvider = Provider.of<ReviewerPaperProvider>(context);
+
+    List<ReviewerPaperData> data = reviewerDataProvider.reviewerPaperData;
+
+    // sort from newest to oldest
+    data.sort((a, b) =>
+        b.paperAbstract!.updatedAt!.compareTo(a.paperAbstract!.updatedAt!));
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
@@ -197,13 +203,13 @@ class _ParticipantAbstractListState extends State<ParticipantAbstractList> {
             hidePaginator: getCurrentRouteOption(context) == custPager,
             columns: _columns,
             empty: const Center(
-                child: Text('No data submitted yet',
+                child: Text('No abstracts with your assigned topics found',
                     style: TextStyle(color: Colors.red))),
             source: getCurrentRouteOption(context) == noData
                 ? ReviewerDataTableSource.empty(context)
                 : ReviewerDataTableSource(
                     context,
-                    reviewerDataProvider.reviewerPaperData,
+                    data,
                   ),
             showCheckboxColumn: false,
           ),

@@ -3,13 +3,13 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:ybb_master_app/core/constants/string_constants.dart';
-import 'package:ybb_master_app/core/models/paper_reviewer_model.dart';
+import 'package:ybb_master_app/core/models/paper_reviewer_topic_model.dart';
 
-class PaperReviewerService {
-  String baseUrl = '${AppStringConstants.apiUrl}/paper_reviewers';
+class PaperReviewerTopicService {
+  String baseUrl = '${AppStringConstants.apiUrl}/paper_reviewer_topics';
 
-  Future<List<PaperReviewerModel>> getAll(String programId) async {
-    var url = Uri.parse('$baseUrl/list?program_id=$programId');
+  Future<List<PaperReviewerTopicModel>> getAll() async {
+    var url = Uri.parse('$baseUrl/');
 
     print(url);
 
@@ -19,10 +19,10 @@ class PaperReviewerService {
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body)['data'];
 
-        List<PaperReviewerModel> value = [];
+        List<PaperReviewerTopicModel> value = [];
 
         for (var i in data) {
-          value.add(PaperReviewerModel.fromJson(i));
+          value.add(PaperReviewerTopicModel.fromJson(i));
         }
 
         return value;
@@ -34,7 +34,33 @@ class PaperReviewerService {
     }
   }
 
-  Future<PaperReviewerModel> add(PaperReviewerModel data) async {
+  Future<List<PaperReviewerTopicModel>> getById(String reviewerId) async {
+    var url = Uri.parse('$baseUrl/list?paper_reviewer_id=$reviewerId');
+
+    print(url);
+
+    try {
+      var response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body)['data'];
+
+        List<PaperReviewerTopicModel> value = [];
+
+        for (var i in data) {
+          value.add(PaperReviewerTopicModel.fromJson(i));
+        }
+
+        return value;
+      } else {
+        return [];
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<PaperReviewerTopicModel> add(PaperReviewerTopicModel data) async {
     var url = Uri.parse('$baseUrl/save');
 
     try {
@@ -46,7 +72,7 @@ class PaperReviewerService {
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body)['data'];
 
-        PaperReviewerModel value = PaperReviewerModel.fromJson(data);
+        PaperReviewerTopicModel value = PaperReviewerTopicModel.fromJson(data);
 
         return value;
       } else {
@@ -71,10 +97,8 @@ class PaperReviewerService {
     }
   }
 
-  Future<PaperReviewerModel> update(PaperReviewerModel data) async {
+  Future<PaperReviewerTopicModel> update(PaperReviewerTopicModel data) async {
     var url = Uri.parse('$baseUrl/update/${data.id}');
-
-    print(data.toString());
 
     try {
       var response = await http.post(url, body: data.toJson());
@@ -82,33 +106,9 @@ class PaperReviewerService {
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body)['data'];
 
-        PaperReviewerModel value = PaperReviewerModel.fromJson(data);
+        PaperReviewerTopicModel value = PaperReviewerTopicModel.fromJson(data);
 
         return value;
-      } else {
-        throw jsonDecode(response.body)['message'];
-      }
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  Future<PaperReviewerModel> signIn(String email, String password) async {
-    var url = Uri.parse('$baseUrl/signin?email=$email&password=$password');
-
-    try {
-      var response = await http.get(url);
-
-      if (response.statusCode == 200) {
-        var data = jsonDecode(response.body)['data'];
-
-        List<PaperReviewerModel> value = [];
-
-        for (var i in data) {
-          value.add(PaperReviewerModel.fromJson(i));
-        }
-
-        return value[0];
       } else {
         throw jsonDecode(response.body)['message'];
       }

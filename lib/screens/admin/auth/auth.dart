@@ -7,6 +7,8 @@ import 'package:ybb_master_app/core/models/admin/admin_model.dart';
 import 'package:ybb_master_app/core/routes/route_constants.dart';
 import 'package:ybb_master_app/core/services/admin_service.dart';
 import 'package:ybb_master_app/core/services/paper_reviewer_service.dart';
+import 'package:ybb_master_app/core/services/paper_reviewer_topic_service.dart';
+import 'package:ybb_master_app/core/services/paper_topic_service.dart';
 import 'package:ybb_master_app/core/services/program_category_service.dart';
 import 'package:ybb_master_app/core/services/program_service.dart';
 import 'package:ybb_master_app/core/widgets/common_widgets.dart';
@@ -112,11 +114,30 @@ class _AuthState extends State<Auth> {
         }
       }
 
-      setState(() {
-        isLoading = false;
-      });
+      await PaperReviewerTopicService().getAll().then((value) async {
+        Provider.of<PaperProvider>(context, listen: false).reviewerTopics =
+            value;
 
-      context.pushNamed(DashboardReviewer.routeName);
+        String? programId = Provider.of<ProgramProvider>(context, listen: false)
+            .currentProgram!
+            .id;
+
+        await PaperTopicService().getAll(programId!).then((topics) {
+          Provider.of<PaperProvider>(context, listen: false).paperTopics =
+              topics;
+
+          setState(() {
+            isLoading = false;
+          });
+
+          context.pushNamed(DashboardReviewer.routeName);
+        }).onError((error, stackTrace) {
+          print("Error: $error");
+        });
+      }).onError((error, stackTrace) {
+        print("Error: $error");
+      });
+      ;
     }).onError((error, stackTrace) {
       setState(() {
         isLoading = false;
@@ -259,8 +280,8 @@ class _AuthState extends State<Auth> {
 
                             // setState(() {
                             //   isLoading = true;
-                            //   emailController.text = "super@email.com";
-                            //   passwordController.text = "super";
+                            //   emailController.text = "hendra@email.com";
+                            //   passwordController.text = "hendra123@";
                             // });
 
                             signInReviewer();

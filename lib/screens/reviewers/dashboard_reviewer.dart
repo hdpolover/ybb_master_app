@@ -4,10 +4,12 @@ import 'package:ybb_master_app/core/models/paper_abstract_model.dart';
 import 'package:ybb_master_app/core/models/paper_author_model.dart';
 import 'package:ybb_master_app/core/models/paper_detail_model.dart';
 import 'package:ybb_master_app/core/models/paper_reviewer_model.dart';
+import 'package:ybb_master_app/core/models/paper_reviewer_topic_model.dart';
 import 'package:ybb_master_app/core/models/paper_revision_model.dart';
 import 'package:ybb_master_app/core/services/paper_abstract_service.dart';
 import 'package:ybb_master_app/core/services/paper_author_service.dart';
 import 'package:ybb_master_app/core/services/paper_detail_service.dart';
+import 'package:ybb_master_app/core/services/paper_reviewer_topic_service.dart';
 import 'package:ybb_master_app/core/services/paper_revision_service.dart';
 import 'package:ybb_master_app/core/services/paper_topic_service.dart';
 import 'package:ybb_master_app/core/widgets/common_app_bar.dart';
@@ -43,40 +45,17 @@ class DashboardReviewer extends StatefulWidget {
 
 class _DashboardReviewerState extends State<DashboardReviewer> {
   bool isLoading = true;
-  String allPaperTopicId = "";
 
   @override
   void initState() {
     super.initState();
 
-    getPaperTopics();
     getData();
-  }
-
-  getPaperTopics() async {
-    String? programId =
-        Provider.of<ProgramProvider>(context, listen: false).currentProgram!.id;
-
-    await PaperTopicService().getAll(programId!).then((topics) {
-      Provider.of<PaperProvider>(context, listen: false).paperTopics = topics;
-
-      for (var topic in topics) {
-        if (topic.topicName!.toLowerCase() == "all") {
-          setState(() {
-            allPaperTopicId = topic.id!;
-          });
-        }
-      }
-    }).onError((error, stackTrace) {
-      print("Error: $error");
-    });
   }
 
   getData() async {
     String? programId =
         Provider.of<ProgramProvider>(context, listen: false).currentProgram!.id;
-
-    print(programId);
 
     List<PaperDetailModel> tempDetails = [];
     List<PaperAbstractModel> tempAbstracts = [];
@@ -87,19 +66,14 @@ class _DashboardReviewerState extends State<DashboardReviewer> {
     await PaperDetailService().getAll(programId).then((details) async {
       tempDetails = details!;
 
-      print("tempdetails: " + tempDetails.length.toString());
-
       await PaperRevisionService().getAll().then((revisions) async {
         tempRevisions = revisions!;
 
         await PaperAbstractService().getAll(programId).then((abstracts) async {
           tempAbstracts = abstracts!;
 
-          print("tempabstracts: " + tempAbstracts.length.toString());
-
           for (var item in tempDetails) {
             if (item.paperAbstractId != null && item.paperTopicId != null) {
-              print("Paper ID: ${item.id}");
               PaperAbstractModel? matchingAbstract;
 
               await PaperAuthorService().getAll(item.id).then((authors) {
@@ -146,27 +120,42 @@ class _DashboardReviewerState extends State<DashboardReviewer> {
       print("Error: $error");
     });
 
-    // remove abstracts that do not match the current reviewer's topic
-    if (Provider.of<PaperProvider>(context, listen: false)
-            .currentReviewer!
-            .paperTopicId !=
-        allPaperTopicId) {
-      tempData.removeWhere((element) =>
-          element.paperDetail!.paperTopicId !=
+    // get reviewer topics
+    List<PaperReviewerTopicModel> reviewerTopics =
+        Provider.of<PaperProvider>(context, listen: false).reviewerTopics;
+
+    List<PaperReviewerTopicModel> currentReviewerTopics = [];
+
+    for (var topic in reviewerTopics) {
+      if (topic.paperReviewerId ==
           Provider.of<PaperProvider>(context, listen: false)
               .currentReviewer!
-              .paperTopicId);
+              .id) {
+        currentReviewerTopics.add(topic);
+      }
     }
 
-    // remove duplicates by paper detail id
-    tempData.removeWhere((element) {
-      var ids = tempData.map((e) => e.paperDetail!.id).toList();
-      return ids.indexOf(element.paperDetail!.id) !=
-          ids.lastIndexOf(element.paperDetail!.id);
-    });
+    print(currentReviewerTopics.length);
 
-    Provider.of<ReviewerPaperProvider>(context, listen: false)
-        .reviewerPaperData = tempData;
+    // remove abstracts that do not match the current reviewer's topic
+    if (currentReviewerTopics.isEmpty) {
+      Provider.of<ReviewerPaperProvider>(context, listen: false)
+          .reviewerPaperData = tempData;
+      return;
+    } else {
+      List<ReviewerPaperData> temp = [];
+
+      for (var topic in currentReviewerTopics) {
+        for (var data in tempData) {
+          if (data.paperDetail!.paperTopicId == topic.paperTopicId) {
+            temp.add(data);
+          }
+        }
+      }
+
+      Provider.of<ReviewerPaperProvider>(context, listen: false)
+          .reviewerPaperData = temp;
+    }
   }
 
   buildProfileSummary() {
@@ -174,18 +163,41 @@ class _DashboardReviewerState extends State<DashboardReviewer> {
         Provider.of<PaperProvider>(context, listen: false).currentReviewer!;
 
     var topics = Provider.of<PaperProvider>(context, listen: false).paperTopics;
+    var reviewerTopics =
+        Provider.of<PaperProvider>(context, listen: false).reviewerTopics;
 
     String topicName = "";
 
-    for (var topic in topics) {
-      if (topic.id == reviewer.paperTopicId) {
-        topicName = topic.topicName!;
+    // check if reviewer topics contain the current reviewer's topic
+    bool hasTopic = false;
+
+    for (var topic in reviewerTopics) {
+      if (topic.paperReviewerId == reviewer.id) {
+        hasTopic = true;
+        break;
       }
+    }
+
+    if (hasTopic) {
+      List<String> topicNames = [];
+      for (var topic in reviewerTopics) {
+        for (var t in topics) {
+          if (t.id == topic.paperTopicId &&
+              topic.paperReviewerId == reviewer.id) {
+            topicNames.add(t.topicName!);
+          }
+        }
+      }
+
+      topicName =
+          "${topicNames.length} Assigned topics: ${topicNames.join(", ")}";
+    } else {
+      topicName = "No assigned topics yet";
     }
 
     return Container(
       width: MediaQuery.sizeOf(context).width * 0.3,
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -198,24 +210,32 @@ class _DashboardReviewerState extends State<DashboardReviewer> {
             ),
           ),
           const SizedBox(height: 10),
+          Divider(
+            color: Colors.grey[300],
+            thickness: 1,
+          ),
+          const SizedBox(height: 10),
           Text(
-            "Name: ${reviewer.name}",
+            reviewer.name ?? "-",
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            reviewer.email ?? "-",
             style: const TextStyle(
               fontSize: 16,
             ),
           ),
           const SizedBox(height: 10),
           Text(
-            "Email: ${reviewer.email}",
+            topicName,
+            textAlign: TextAlign.center,
             style: const TextStyle(
-              fontSize: 16,
-            ),
-          ),
-          const SizedBox(height: 10),
-          Text(
-            "Assigned Topic: $topicName",
-            style: const TextStyle(
-              fontSize: 16,
+              fontSize: 14,
+              fontStyle: FontStyle.italic,
             ),
           ),
         ],
