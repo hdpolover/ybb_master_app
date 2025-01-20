@@ -122,59 +122,61 @@ class _AddEditReviewerState extends State<AddEditReviewer> {
                 },
               ),
         const SizedBox(height: 10),
-        isShowTopicInput
-            ? Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildTopicDropdownInput(),
-                  const SizedBox(height: 10),
-                  Align(
+        topicIds.length == paperTopics.length
+            ? const SizedBox()
+            : isShowTopicInput
+                ? Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildTopicDropdownInput(),
+                      const SizedBox(height: 10),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            CommonWidgets().buildCustomButton(
+                              width: 200,
+                              color: Colors.red,
+                              text: "Cancel",
+                              onPressed: () {
+                                setState(() {
+                                  isShowTopicInput = false;
+                                });
+                              },
+                            ),
+                            const SizedBox(width: 10),
+                            CommonWidgets().buildCustomButton(
+                              width: 200,
+                              color: Colors.green,
+                              text: "Save Topic",
+                              onPressed: () async {
+                                setState(() {
+                                  topicIds.add(selectedTopicId!);
+                                  newTopicIds.add(selectedTopicId!);
+                                  isShowTopicInput = false;
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                      )
+                    ],
+                  )
+                : Align(
                     alignment: Alignment.centerRight,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        CommonWidgets().buildCustomButton(
-                          width: 200,
-                          color: Colors.red,
-                          text: "Cancel",
-                          onPressed: () {
-                            setState(() {
-                              isShowTopicInput = false;
-                            });
-                          },
-                        ),
-                        const SizedBox(width: 10),
-                        CommonWidgets().buildCustomButton(
-                          width: 200,
-                          color: Colors.green,
-                          text: "Save Topic",
-                          onPressed: () async {
-                            setState(() {
-                              topicIds.add(selectedTopicId!);
-                              newTopicIds.add(selectedTopicId!);
-                              isShowTopicInput = false;
-                            });
-                          },
-                        ),
-                      ],
+                    child: CommonWidgets().buildCustomButton(
+                      width: 200,
+                      color: Colors.blue,
+                      text: "Add Topic",
+                      onPressed: () {
+                        setState(() {
+                          isShowTopicInput = true;
+                        });
+                      },
                     ),
                   )
-                ],
-              )
-            : Align(
-                alignment: Alignment.centerRight,
-                child: CommonWidgets().buildCustomButton(
-                  width: 200,
-                  color: Colors.blue,
-                  text: "Add Topic",
-                  onPressed: () {
-                    setState(() {
-                      isShowTopicInput = true;
-                    });
-                  },
-                ),
-              )
       ],
     );
   }
@@ -189,10 +191,8 @@ class _AddEditReviewerState extends State<AddEditReviewer> {
     paperTopics.removeWhere((element) => element.isActive == "0");
 
     // remove topics that are already  in topicIds
-    for (var topic in paperTopics) {
-      if (topicIds.contains(topic.id)) {
-        paperTopics.remove(topic);
-      }
+    for (var topicId in topicIds) {
+      paperTopics.removeWhere((element) => element.id == topicId);
     }
 
     return FormBuilderDropdown(

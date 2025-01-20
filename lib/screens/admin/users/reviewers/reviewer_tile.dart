@@ -31,7 +31,9 @@ class ReviewerTile extends StatelessWidget {
 
     return topicNames.isEmpty
         ? "No assigned topics yet"
-        : "${topicNames.length} Assigned topics: $topicName";
+        : topicNames.length == topics.length
+            ? "Assigned all topics"
+            : "${topicNames.length} Assigned topics: $topicName";
   }
 
   @override
