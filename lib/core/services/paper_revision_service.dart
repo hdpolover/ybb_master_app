@@ -37,9 +37,6 @@ class PaperRevisionService {
     try {
       var response = await http.post(
         url,
-        headers: {
-          'Content-Type': 'application/json',
-        },
         body: paperRevision.toJson(),
       );
 

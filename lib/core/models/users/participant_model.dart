@@ -184,4 +184,9 @@ class ParticipantModel {
         "payment_status": paymentStatus,
         "email": email,
       };
+
+  @override
+  String toString() {
+    return 'ParticipantModel(id: $id, userId: $userId, accountId: $accountId, fullName: $fullName, birthdate: $birthdate, refCodeAmbassador: $refCodeAmbassador, programId: $programId';
+  }
 }

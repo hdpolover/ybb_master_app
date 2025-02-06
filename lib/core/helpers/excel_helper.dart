@@ -79,8 +79,21 @@ class ExcelHelper {
     var fileBytes = excel.save(fileName: fileName);
   }
 
-  static exportParticipantData(
-      List<ParticipantModel> participants, String category) {
+  String getDisplayValue(dynamic value, {String placeholder = "-"}) {
+    if (value == null || value.toString().isEmpty) {
+      return placeholder;
+    }
+
+    // if value is a date time
+    if (value is DateTime) {
+      return CommonMethods.formatDate(value);
+    }
+
+    return value.toString();
+  }
+
+  Future<bool> exportParticipantData(
+      List<ParticipantModel> participants, String category) async {
     var excel = Excel.createExcel();
     var sheet = excel['Sheet1'];
 
@@ -124,37 +137,53 @@ class ExcelHelper {
       List<TextCellValue> cellValues = [];
 
       cellValues.add(TextCellValue(index.toString()));
-      cellValues.add(TextCellValue(participant.fullName ?? "-"));
-      cellValues.add(TextCellValue(participant.email ?? "-"));
-      cellValues.add(TextCellValue(participant.phoneNumber ?? "-"));
-      cellValues.add(TextCellValue(participant.gender ?? "-"));
-      cellValues.add(TextCellValue(participant.birthdate != null
-          ? CommonMethods.formatDate(participant.birthdate)
-          : "-"));
-      cellValues.add(TextCellValue(participant.originAddress ?? "-"));
-      cellValues.add(TextCellValue(participant.currentAddress ?? "-"));
-      cellValues.add(TextCellValue(participant.nationality ?? "-"));
-      cellValues.add(TextCellValue(participant.tshirtSize ?? "-"));
-      cellValues.add(TextCellValue(participant.occupation ?? "-"));
-      cellValues.add(TextCellValue(participant.institution ?? "-"));
-      cellValues.add(TextCellValue(participant.organizations ?? "-"));
-      cellValues.add(TextCellValue(participant.instagramAccount ?? "-"));
-      cellValues.add(TextCellValue(participant.emergencyAccount ?? "-"));
-      cellValues.add(TextCellValue(participant.contactRelation ?? "-"));
-      cellValues.add(TextCellValue(participant.diseaseHistory ?? "-"));
-      cellValues.add(TextCellValue(participant.experiences ?? "-"));
-      cellValues.add(TextCellValue(participant.achievements ?? "-"));
+
+      // check which data is null
+      cellValues.add(TextCellValue(getDisplayValue(participant.fullName)));
+      cellValues.add(TextCellValue(getDisplayValue(participant.email)));
+      cellValues.add(TextCellValue(getDisplayValue(participant.phoneNumber)));
+      cellValues.add(TextCellValue(getDisplayValue(participant.gender)));
+      cellValues.add(TextCellValue(getDisplayValue(participant.birthdate)));
+      cellValues.add(TextCellValue(getDisplayValue(participant.originAddress)));
+      cellValues
+          .add(TextCellValue(getDisplayValue(participant.currentAddress)));
+      cellValues.add(TextCellValue(getDisplayValue(participant.nationality)));
+      cellValues.add(TextCellValue(getDisplayValue(participant.tshirtSize)));
+      cellValues.add(TextCellValue(getDisplayValue(participant.occupation)));
+      cellValues.add(TextCellValue(getDisplayValue(participant.institution)));
+      cellValues.add(TextCellValue(getDisplayValue(participant.organizations)));
+      cellValues
+          .add(TextCellValue(getDisplayValue(participant.instagramAccount)));
+      cellValues
+          .add(TextCellValue(getDisplayValue(participant.emergencyAccount)));
+      cellValues
+          .add(TextCellValue(getDisplayValue(participant.contactRelation)));
+      cellValues
+          .add(TextCellValue(getDisplayValue(participant.diseaseHistory)));
+      cellValues.add(TextCellValue(getDisplayValue(participant.experiences)));
+      cellValues.add(TextCellValue(getDisplayValue(participant.achievements)));
 
       sheet.appendRow(cellValues);
 
       index++;
     }
 
-    DateTime now = DateTime.now();
-    String formatDate = "(${now.day}/${now.month}/${now.year})";
+    List<int>? fileBytes;
 
-    var fileName = getExcelFileName('$formatDate $category Participant Data');
+    // make sure loop is done by now
+    if (index == participants.length + 1) {
+      DateTime now = DateTime.now();
+      String formatDate = "(${now.day}/${now.month}/${now.year})";
 
-    var fileBytes = excel.save(fileName: fileName);
+      var fileName = getExcelFileName('$formatDate $category Participant Data');
+
+      fileBytes = excel.save(fileName: fileName);
+    }
+
+    if (fileBytes != null) {
+      return Future<bool>.value(true);
+    } else {
+      return Future<bool>.value(false);
+    }
   }
 }

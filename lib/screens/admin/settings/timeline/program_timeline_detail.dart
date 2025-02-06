@@ -33,6 +33,11 @@ class _ProgramTimelineDetailState extends State<ProgramTimelineDetail> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // order number
+              CommonWidgets().buildTitleTextItem(
+                "Order Number",
+                widget.programTimeline!.orderNumber.toString(),
+              ),
               CommonWidgets().buildTitleTextItem(
                 "Timeline Name",
                 widget.programTimeline!.name!,
@@ -57,7 +62,8 @@ class _ProgramTimelineDetailState extends State<ProgramTimelineDetail> {
                 text: "Edit Timeline",
                 onPressed: () {
                   // navigate to edit payment screen
-                  context.pushNamed(AppRouteConstants.addEditPaymentRouteName,
+                  context.pushNamed(
+                      AppRouteConstants.addEditProgramTimelineRouteName,
                       extra: widget.programTimeline);
                 },
               ),

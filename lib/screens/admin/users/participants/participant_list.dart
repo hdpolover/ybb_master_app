@@ -3,7 +3,9 @@ import 'package:provider/provider.dart';
 import 'package:ybb_master_app/core/helpers/excel_helper.dart';
 import 'package:ybb_master_app/core/models/users/participant_model.dart';
 import 'package:ybb_master_app/core/widgets/common_app_bar.dart';
+import 'package:ybb_master_app/core/widgets/common_dialog.dart';
 import 'package:ybb_master_app/core/widgets/common_widgets.dart';
+import 'package:ybb_master_app/core/widgets/loading_widget.dart';
 import 'package:ybb_master_app/providers/participant_provider.dart';
 import 'package:ybb_master_app/screens/admin/users/widgets/participant_filter_dialog.dart';
 import 'package:ybb_master_app/screens/admin/users/widgets/participant_preview_widget.dart';
@@ -23,6 +25,8 @@ class _ParticipantListState extends State<ParticipantList> {
   int resultCount = 0;
   String category = "All";
 
+  bool isLoading = false;
+
   @override
   void initState() {
     super.initState();
@@ -36,6 +40,9 @@ class _ParticipantListState extends State<ParticipantList> {
 
     // get the data
     participants = participantProvider.participants;
+
+    filterText =
+        "No filters applied. (${participants.length} results, $category) ";
 
     setState(() {});
   }
@@ -118,10 +125,10 @@ class _ParticipantListState extends State<ParticipantList> {
       filteredParticipants = filteredParticipants.where((participant) {
         return participant.fullName!
                 .toLowerCase()
-                .contains(selectedFilters["text"].toLowerCase()) ||
+                .contains(selectedFilters["text"].toString().toLowerCase()) ||
             participant.email!
                 .toLowerCase()
-                .contains(selectedFilters["text"].toLowerCase());
+                .contains(selectedFilters["text"].toString().toLowerCase());
       }).toList();
     }
 
@@ -142,19 +149,49 @@ class _ParticipantListState extends State<ParticipantList> {
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         child: Row(
           children: [
-            Expanded(
-                child: Text(selectedFilters.keys.isEmpty
-                    ? "No filters applied"
-                    : filterText)),
+            Expanded(child: Text(filterText)),
             const SizedBox(width: 10),
-            CommonWidgets().buildCustomButton(
-              width: 100,
-              color: Colors.green,
-              text: "Export",
-              onPressed: () {
-                ExcelHelper.exportParticipantData(participants, category);
-              },
-            ),
+            isLoading
+                ? const LoadingWidget()
+                : CommonWidgets().buildCustomButton(
+                    width: 100,
+                    color: Colors.green,
+                    text: "Export",
+                    onPressed: () async {
+                      setState(() {
+                        isLoading = true;
+                      });
+
+                      await Future.delayed(const Duration(seconds: 2));
+
+                      await ExcelHelper()
+                          .exportParticipantData(participants, category)
+                          .then((res) {
+                        if (res) {
+                          CommonDialog.showAlertDialog(context, "Success",
+                              "Data has been exported successfully",
+                              onConfirm: () {
+                            setState(() {
+                              isLoading = false;
+                            });
+
+                            // remove parent dialog
+                            Navigator.of(context, rootNavigator: true).pop();
+                          });
+                        } else {
+                          CommonDialog.showAlertDialog(context, "Error",
+                              "An error occurred while exporting data",
+                              onConfirm: () {
+                            setState(() {
+                              isLoading = false;
+                            });
+
+                            Navigator.of(context, rootNavigator: true).pop();
+                          });
+                        }
+                      });
+                    },
+                  ),
             const SizedBox(width: 10),
             CommonWidgets().buildCustomButton(
               width: 100,
@@ -169,8 +206,6 @@ class _ParticipantListState extends State<ParticipantList> {
 
   @override
   Widget build(BuildContext context) {
-    var participantProvider = Provider.of<ParticipantProvider>(context);
-
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: const CommonAppBar(title: "Participants"),

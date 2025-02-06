@@ -86,6 +86,7 @@ class _AddEditProgramTimelineState extends State<AddEditProgramTimeline> {
               .updateProgramTimeline(value);
 
           Navigator.pop(context);
+          Navigator.pop(context);
         }).catchError((e, s) {
           print(s);
 
@@ -113,6 +114,7 @@ class _AddEditProgramTimelineState extends State<AddEditProgramTimeline> {
           Provider.of<ProgramProvider>(context, listen: false)
               .addProgramTimeline(value);
 
+          Navigator.pop(context);
           Navigator.pop(context);
         }).catchError((e, s) {
           print(s);

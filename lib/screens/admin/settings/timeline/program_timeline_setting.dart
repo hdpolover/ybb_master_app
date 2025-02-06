@@ -5,6 +5,7 @@ import 'package:ybb_master_app/core/models/program_timeline_model.dart';
 import 'package:ybb_master_app/core/routes/route_constants.dart';
 import 'package:ybb_master_app/core/services/program_timeline_service.dart';
 import 'package:ybb_master_app/core/widgets/common_app_bar.dart';
+import 'package:ybb_master_app/core/widgets/common_methods.dart';
 import 'package:ybb_master_app/core/widgets/loading_widget.dart';
 import 'package:ybb_master_app/providers/program_provider.dart';
 import 'package:ybb_master_app/screens/admin/settings/item_widget_tile.dart';
@@ -74,8 +75,8 @@ class _ProgramTimelineSettingState extends State<ProgramTimelineSetting> {
                       title: programTimelines[index].name!,
                       description: programTimelines[index].description!,
                       moreDesc:
-                          "Start Date: ${programTimelines[index].startDate}"
-                          "\nEnd Date: ${programTimelines[index].endDate}",
+                          "Start Date: ${CommonMethods.formatDate(programTimelines[index].startDate)}"
+                          "\nEnd Date: ${CommonMethods.formatDate(programTimelines[index].endDate)}",
                       onTap: () {
                         // Edit payment method
                         context.pushNamed(

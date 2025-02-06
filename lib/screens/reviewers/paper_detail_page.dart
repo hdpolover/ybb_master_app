@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:ybb_master_app/core/models/paper_author_model.dart';
+import 'package:ybb_master_app/core/models/paper_revision_model.dart';
 import 'package:ybb_master_app/core/widgets/common_app_bar.dart';
 import 'package:ybb_master_app/core/widgets/common_widgets.dart';
 import 'package:ybb_master_app/providers/paper_provider.dart';
+import 'package:ybb_master_app/providers/reviewer_paper_provider.dart';
 import 'package:ybb_master_app/screens/reviewers/add_revision.dart';
 import 'package:ybb_master_app/screens/reviewers/dashboard_reviewer.dart';
-import 'package:ybb_master_app/screens/reviewers/reviewer_data_table_source.dart';
 
 class PaperDetailPage extends StatefulWidget {
-  final ReviewerPaperData reviewerPaperData;
+  final String paperDetailId;
 
-  const PaperDetailPage({super.key, required this.reviewerPaperData});
+  const PaperDetailPage({super.key, required this.paperDetailId});
 
   static const String routeName = "paper_detail";
   static const String pathName = "/paper-detail";
@@ -22,18 +24,7 @@ class PaperDetailPage extends StatefulWidget {
 }
 
 class _PaperDetailPageState extends State<PaperDetailPage> {
-  @override
-  void initState() {
-    super.initState();
-
-    getRevisionData();
-  }
-
-  getRevisionData() async {
-    // get the revision data for the paper
-  }
-
-  _buildPaperSection() {
+  _buildPaperSection(ReviewerPaperData reviewerPaperData) {
     // create a container card with a column of text widgets for the paper details
     return Container(
       width: double.infinity,
@@ -54,28 +45,29 @@ class _PaperDetailPageState extends State<PaperDetailPage> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          CommonWidgets().buildTitleTextItem("Author(s)",
-              mergeAuthorNames(widget.reviewerPaperData.paperAuthors)),
           CommonWidgets().buildTitleTextItem(
-              "Topic",
-              getTopicName(
-                  widget.reviewerPaperData.paperDetail!.paperTopicId!)),
+              "Author(s)", mergeAuthorNames(reviewerPaperData.paperAuthors)),
+          CommonWidgets().buildTitleTextItem("Topic",
+              getTopicName(reviewerPaperData.paperDetail!.paperTopicId!)),
           const Divider(
             color: Colors.grey,
             thickness: 1,
           ),
           CommonWidgets().buildTitleTextItem(
-              "Title", widget.reviewerPaperData.paperAbstract!.title!),
+              "Title", reviewerPaperData.paperAbstract!.title!),
           CommonWidgets().buildTitleTextItem(
-              "Abstract", widget.reviewerPaperData.paperAbstract!.content!),
+              "Abstract", reviewerPaperData.paperAbstract!.content!),
           CommonWidgets().buildTitleTextItem(
-              "Keywords", widget.reviewerPaperData.paperAbstract!.keywords!),
+              "Keywords", reviewerPaperData.paperAbstract!.keywords!),
         ],
       ),
     );
   }
 
-  _buildRevisionSection() {
+  _buildRevisionSection(List<PaperRevisionModel> revisions) {
+    // sort the revisions by date descending
+    revisions.sort((a, b) => b.createdAt!.compareTo(a.createdAt!));
+
     return Container(
       width: MediaQuery.sizeOf(context).width,
       decoration: BoxDecoration(
@@ -110,14 +102,15 @@ class _PaperDetailPageState extends State<PaperDetailPage> {
                 width: 150,
                 text: "Add Revision",
                 onPressed: () {
-                  context.pushNamed(AddRevision.routeName);
+                  context.pushNamed(AddRevision.routeName,
+                      extra: widget.paperDetailId);
                 },
               ),
             ],
           ),
           const SizedBox(height: 10),
           // create a list view of the revisions
-          widget.reviewerPaperData.paperRevisions.isEmpty
+          revisions.isEmpty
               ? const Padding(
                   padding: EdgeInsets.symmetric(vertical: 20),
                   child: Center(
@@ -126,7 +119,7 @@ class _PaperDetailPageState extends State<PaperDetailPage> {
                 )
               : ListView.builder(
                   shrinkWrap: true,
-                  itemCount: widget.reviewerPaperData.paperRevisions.length,
+                  itemCount: revisions.length,
                   itemBuilder: (context, index) {
                     return Container(
                       padding: const EdgeInsets.all(10),
@@ -142,11 +135,10 @@ class _PaperDetailPageState extends State<PaperDetailPage> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(widget.reviewerPaperData.paperRevisions[index]
-                                .comment!),
+                            Text(revisions[index].comment!),
                             const SizedBox(height: 10),
                             Text(
-                              "Date: ${widget.reviewerPaperData.paperRevisions[index].createdAt}",
+                              "Commented on ${DateFormat('yyyy-MM-dd HH:mm').format(revisions[index].createdAt!)}",
                               style: const TextStyle(
                                 fontSize: 12,
                                 color: Colors.grey,
@@ -165,6 +157,23 @@ class _PaperDetailPageState extends State<PaperDetailPage> {
 
   @override
   Widget build(BuildContext context) {
+    var reviewerPaperProvider = Provider.of<ReviewerPaperProvider>(context);
+
+    List<ReviewerPaperData> data = reviewerPaperProvider.reviewerPaperData;
+
+    // get the paper data
+    ReviewerPaperData reviewerPaperData = data.firstWhere(
+        (element) => element.paperDetail!.id == widget.paperDetailId);
+
+    // get the revision data for the paper
+    List<PaperRevisionModel> revisions = [];
+
+    for (var paper in data) {
+      if (paper.paperDetail!.id == widget.paperDetailId) {
+        revisions = paper.paperRevisions;
+      }
+    }
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: const CommonAppBar(
@@ -175,9 +184,9 @@ class _PaperDetailPageState extends State<PaperDetailPage> {
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
           child: Column(
             children: [
-              _buildPaperSection(),
+              _buildPaperSection(reviewerPaperData),
               const SizedBox(height: 20),
-              _buildRevisionSection(),
+              _buildRevisionSection(revisions),
             ],
           ),
         ),

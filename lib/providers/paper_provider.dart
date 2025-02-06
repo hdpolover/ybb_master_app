@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ybb_master_app/core/models/paper_author_model.dart';
 import 'package:ybb_master_app/core/models/paper_reviewer_model.dart';
 import 'package:ybb_master_app/core/models/paper_reviewer_topic_model.dart';
 import 'package:ybb_master_app/core/models/paper_topic_model.dart';
@@ -6,8 +7,26 @@ import 'package:ybb_master_app/core/models/paper_topic_model.dart';
 class PaperProvider extends ChangeNotifier {
   List<PaperReviewerModel> _paperReviewers = [];
   List<PaperTopicModel> _paperTopics = [];
+  List<PaperAuthorModel> _paperAuthors = [];
   PaperReviewerModel? _currentReviewer;
   List<PaperReviewerTopicModel> _reviewerTopics = [];
+
+  List<PaperAuthorModel> get paperAuthors => _paperAuthors;
+
+  set paperAuthors(List<PaperAuthorModel> paperAuthors) {
+    _paperAuthors = paperAuthors;
+    notifyListeners();
+  }
+
+  void addPaperAuthor(PaperAuthorModel paperAuthor) {
+    _paperAuthors.add(paperAuthor);
+    notifyListeners();
+  }
+
+  void removePaperAuthor(PaperAuthorModel paperAuthor) {
+    _paperAuthors.remove(paperAuthor);
+    notifyListeners();
+  }
 
   PaperReviewerModel? get currentReviewer => _currentReviewer;
 

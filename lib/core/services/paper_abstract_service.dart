@@ -30,4 +30,31 @@ class PaperAbstractService {
       rethrow;
     }
   }
+
+  // update abstract status
+  Future<PaperAbstractModel> updateStatus(
+      String paperAbstractId, String status) async {
+    var url = Uri.parse(
+      '${AppStringConstants.apiUrl}/paper_abstracts/update_status/$paperAbstractId',
+    );
+
+    try {
+      var response = await http.post(
+        url,
+        body: {
+          'status': status,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body)['data'];
+
+        return PaperAbstractModel.fromJson(data);
+      } else {
+        throw Exception('Failed to update paper abstract status');
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

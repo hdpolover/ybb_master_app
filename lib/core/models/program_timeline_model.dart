@@ -60,16 +60,11 @@ class ProgramTimelineModel {
       );
 
   Map<String, dynamic> toJson() => {
-        "id": id,
         "program_id": programId,
         "name": name,
         "description": description,
         "start_date": startDate?.toIso8601String(),
         "end_date": endDate?.toIso8601String(),
         "order_number": orderNumber,
-        "is_active": isActive,
-        "is_deleted": isDeleted,
-        "created_at": createdAt?.toIso8601String(),
-        "updated_at": updatedAt?.toIso8601String(),
       };
 }

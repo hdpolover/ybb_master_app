@@ -567,15 +567,17 @@ class AppRouteConfig {
         path: PaperDetailPage.pathName,
         pageBuilder: (context, state) => NoTransitionPage(
           child: PaperDetailPage(
-            reviewerPaperData: state.extra as ReviewerPaperData,
+            paperDetailId: state.extra as String,
           ),
         ),
       ),
       GoRoute(
         name: AddRevision.routeName,
         path: AddRevision.pathName,
-        pageBuilder: (context, state) => const NoTransitionPage(
-          child: AddRevision(),
+        pageBuilder: (context, state) => NoTransitionPage(
+          child: AddRevision(
+            paperDetailId: state.extra as String,
+          ),
         ),
       ),
     ],

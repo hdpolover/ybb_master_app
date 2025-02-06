@@ -40,9 +40,6 @@ class PaperReviewerService {
     try {
       var response = await http.post(url, body: data.toJson());
 
-      print(response.body);
-      print(response.statusCode);
-
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body)['data'];
 

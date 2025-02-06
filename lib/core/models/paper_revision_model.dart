@@ -48,13 +48,8 @@ class PaperRevisionModel {
       );
 
   Map<String, dynamic> toJson() => {
-        "id": id,
         "paper_detail_id": paperDetailId,
         "paper_reviewer_id": paperReviewerId,
         "comment": comment,
-        "is_active": isActive,
-        "is_deleted": isDeleted,
-        "created_at": createdAt?.toIso8601String(),
-        "updated_at": updatedAt?.toIso8601String(),
       };
 }

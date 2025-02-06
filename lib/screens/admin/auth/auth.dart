@@ -90,6 +90,10 @@ class _AuthState extends State<Auth> {
       await AdminService().login(email, password).then((value) {
         decideWhichAdmin(value);
       }).onError((error, stackTrace) {
+        setState(() {
+          isLoading = false;
+        });
+
         CommonHelper().showError(context, error.toString());
       });
     } else {
@@ -122,15 +126,20 @@ class _AuthState extends State<Auth> {
             .currentProgram!
             .id;
 
-        await PaperTopicService().getAll(programId!).then((topics) {
+        await PaperTopicService().getAll(programId!).then((topics) async {
           Provider.of<PaperProvider>(context, listen: false).paperTopics =
               topics;
 
-          setState(() {
-            isLoading = false;
-          });
+          await PaperReviewerService().getAll(programId).then((reviewers) {
+            Provider.of<PaperProvider>(context, listen: false).paperReviewers =
+                reviewers;
 
-          context.pushNamed(DashboardReviewer.routeName);
+            setState(() {
+              isLoading = false;
+            });
+
+            context.pushNamed(DashboardReviewer.routeName);
+          });
         }).onError((error, stackTrace) {
           print("Error: $error");
         });
@@ -220,73 +229,78 @@ class _AuthState extends State<Auth> {
                         // create a button to sign in with the text "Sign in" using the elevated button widget and color it blue, make the width as big as the parent
                         isLoading
                             ? const LoadingWidget()
-                            : CommonWidgets().buildCustomButton(
-                                width: double.infinity,
-                                color: Colors.blue,
-                                text: "Sign in as Admin",
-                                onPressed: () async {
-                                  if (emailController.text.isEmpty ||
-                                      passwordController.text.isEmpty) {
-                                    CommonHelper().showError(context,
-                                        "Please fill in all the fields");
+                            : Column(
+                                children: [
+                                  CommonWidgets().buildCustomButton(
+                                    width: double.infinity,
+                                    color: Colors.blue,
+                                    text: "Sign in as Admin",
+                                    onPressed: () async {
+                                      if (emailController.text.isEmpty ||
+                                          passwordController.text.isEmpty) {
+                                        CommonHelper().showError(context,
+                                            "Please fill in all the fields");
 
-                                    return;
-                                  }
+                                        return;
+                                      }
 
-                                  setState(() {
-                                    isLoading = true;
-                                  });
+                                      setState(() {
+                                        isLoading = true;
+                                      });
 
-                                  signIn();
+                                      signIn();
 
-                                  // String email = "ival@gmail.com";
-                                  // String password = "123";
+                                      // String email = "ival@gmail.com";
+                                      // String password = "123";
 
-                                  // await AdminService()
-                                  //     .login(email, password)
-                                  //     .then((value) {
-                                  //   setState(() {
-                                  //     isLoading = false;
-                                  //   });
+                                      // await AdminService()
+                                      //     .login(email, password)
+                                      //     .then((value) {
+                                      //   setState(() {
+                                      //     isLoading = false;
+                                      //   });
 
-                                  //   decideWhichAdmin(value);
-                                  // }).onError((error, stackTrace) {
-                                  //   setState(() {
-                                  //     isLoading = false;
-                                  //   });
+                                      //   decideWhichAdmin(value);
+                                      // }).onError((error, stackTrace) {
+                                      //   setState(() {
+                                      //     isLoading = false;
+                                      //   });
 
-                                  //   CommonHelper()
-                                  //       .showError(context, error.toString());
-                                  // });
-                                },
-                              ),
-                        const SizedBox(height: 20),
-                        CommonWidgets().buildCustomButton(
-                          width: double.infinity,
-                          color: Colors.green,
-                          text: "Sign in as Reviewer",
-                          onPressed: () {
-                            if (emailController.text.isEmpty ||
-                                passwordController.text.isEmpty) {
-                              CommonHelper().showError(
-                                  context, "Please fill in all the fields");
+                                      //   CommonHelper().showError(
+                                      //       context, error.toString());
+                                      // });
+                                    },
+                                  ),
+                                  const SizedBox(height: 20),
+                                  CommonWidgets().buildCustomButton(
+                                    width: double.infinity,
+                                    color: Colors.green,
+                                    text: "Sign in as Reviewer",
+                                    onPressed: () {
+                                      if (emailController.text.isEmpty ||
+                                          passwordController.text.isEmpty) {
+                                        CommonHelper().showError(context,
+                                            "Please fill in all the fields");
 
-                              return;
-                            }
+                                        return;
+                                      }
 
-                            setState(() {
-                              isLoading = true;
-                            });
+                                      setState(() {
+                                        isLoading = true;
+                                      });
 
-                            // setState(() {
-                            //   isLoading = true;
-                            //   emailController.text = "hendra@email.com";
-                            //   passwordController.text = "hendra123@";
-                            // });
+                                      // setState(() {
+                                      //   isLoading = true;
+                                      //   emailController.text =
+                                      //       "hendra@email.com";
+                                      //   passwordController.text = "hendra123@";
+                                      // });
 
-                            signInReviewer();
-                          },
-                        ),
+                                      signInReviewer();
+                                    },
+                                  ),
+                                ],
+                              )
                       ],
                     ),
                   ),

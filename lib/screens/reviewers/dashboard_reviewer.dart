@@ -9,10 +9,9 @@ import 'package:ybb_master_app/core/models/paper_revision_model.dart';
 import 'package:ybb_master_app/core/services/paper_abstract_service.dart';
 import 'package:ybb_master_app/core/services/paper_author_service.dart';
 import 'package:ybb_master_app/core/services/paper_detail_service.dart';
-import 'package:ybb_master_app/core/services/paper_reviewer_topic_service.dart';
 import 'package:ybb_master_app/core/services/paper_revision_service.dart';
-import 'package:ybb_master_app/core/services/paper_topic_service.dart';
 import 'package:ybb_master_app/core/widgets/common_app_bar.dart';
+import 'package:ybb_master_app/core/widgets/loading_widget.dart';
 import 'package:ybb_master_app/providers/paper_provider.dart';
 import 'package:ybb_master_app/providers/program_provider.dart';
 import 'package:ybb_master_app/providers/reviewer_paper_provider.dart';
@@ -33,6 +32,8 @@ class ReviewerPaperData {
   });
 }
 
+final isAcceptingNotifier = ValueNotifier<bool>(false);
+
 class DashboardReviewer extends StatefulWidget {
   const DashboardReviewer({super.key});
 
@@ -44,39 +45,89 @@ class DashboardReviewer extends StatefulWidget {
 }
 
 class _DashboardReviewerState extends State<DashboardReviewer> {
-  bool isLoading = true;
-
+  bool isLoading = false;
   @override
   void initState() {
     super.initState();
 
+    // Add listener
+    isAcceptingNotifier.addListener(_handleAcceptingChange);
+
     getData();
   }
 
+  void _handleAcceptingChange() {
+    if (isAcceptingNotifier.value) {
+      showFullScreenLoadingWithBg();
+    }
+  }
+
+  // Update isAccepting using the notifier
+  void updateAccepting(bool value) {
+    isAcceptingNotifier.value = value;
+  }
+
+  @override
+  void dispose() {
+    isAcceptingNotifier.removeListener(_handleAcceptingChange);
+    isAcceptingNotifier.dispose();
+    super.dispose();
+  }
+
+  showFullScreenLoadingWithBg() {
+    return showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return const LoadingWidget();
+      },
+    );
+  }
+
   getData() async {
+    setState(() {
+      isLoading = true;
+    });
+
     String? programId =
         Provider.of<ProgramProvider>(context, listen: false).currentProgram!.id;
 
     List<PaperDetailModel> tempDetails = [];
     List<PaperAbstractModel> tempAbstracts = [];
     List<PaperRevisionModel> tempRevisions = [];
+    List<PaperAuthorModel> tempAuthors = [];
 
     List<ReviewerPaperData> tempData = [];
 
-    await PaperDetailService().getAll(programId).then((details) async {
-      tempDetails = details!;
+    await PaperAuthorService().getAllAuthors().then((authors) async {
+      tempAuthors = authors!;
 
-      await PaperRevisionService().getAll().then((revisions) async {
-        tempRevisions = revisions!;
+      Provider.of<PaperProvider>(context, listen: false).paperAuthors =
+          tempAuthors;
 
-        await PaperAbstractService().getAll(programId).then((abstracts) async {
-          tempAbstracts = abstracts!;
+      await PaperDetailService().getAll(programId).then((details) async {
+        tempDetails = details!;
 
-          for (var item in tempDetails) {
-            if (item.paperAbstractId != null && item.paperTopicId != null) {
-              PaperAbstractModel? matchingAbstract;
+        await PaperRevisionService().getAll().then((revisions) async {
+          tempRevisions = revisions!;
 
-              await PaperAuthorService().getAll(item.id).then((authors) {
+          await PaperAbstractService()
+              .getAll(programId)
+              .then((abstracts) async {
+            tempAbstracts = abstracts!;
+
+            for (var item in tempDetails) {
+              if (item.paperAbstractId != null && item.paperTopicId != null) {
+                PaperAbstractModel? matchingAbstract;
+
+                List<PaperAuthorModel> authors = [];
+
+                for (var author in tempAuthors) {
+                  if (author.paperDetailId == item.id) {
+                    authors.add(author);
+                  }
+                }
+
                 for (var abstract in tempAbstracts) {
                   if (abstract.id == item.paperAbstractId) {
                     matchingAbstract = abstract;
@@ -92,27 +143,27 @@ class _DashboardReviewerState extends State<DashboardReviewer> {
                 }
 
                 ReviewerPaperData data = ReviewerPaperData(
-                  paperAuthors: authors!,
+                  paperAuthors: authors,
                   paperDetail: item,
                   paperAbstract: matchingAbstract,
                   paperRevisions: matchingRevisions,
                 );
 
                 tempData.add(data);
-
-                setState(() {
-                  isLoading = false;
-                });
-              }).onError((error, stackTrace) {
-                print("Error: $error");
-              });
+              }
             }
-          }
+
+            setState(() {
+              isLoading = false;
+            });
+          }).onError((error, stackTrace) {
+            print("Error: $error");
+          });
+
+          print("temprevisions: " + tempRevisions.length.toString());
         }).onError((error, stackTrace) {
           print("Error: $error");
         });
-
-        print("temprevisions: " + tempRevisions.length.toString());
       }).onError((error, stackTrace) {
         print("Error: $error");
       });
@@ -140,8 +191,7 @@ class _DashboardReviewerState extends State<DashboardReviewer> {
     // remove abstracts that do not match the current reviewer's topic
     if (currentReviewerTopics.isEmpty) {
       Provider.of<ReviewerPaperProvider>(context, listen: false)
-          .reviewerPaperData = tempData;
-      return;
+          .reviewerPaperData = [];
     } else {
       List<ReviewerPaperData> temp = [];
 
@@ -280,17 +330,46 @@ class _DashboardReviewerState extends State<DashboardReviewer> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: const CommonAppBar(
-        title: "Reviewer Dashboard",
-        isBackEnabled: false,
-      ),
-      body: Row(
-        children: [
-          buildProfileSummary(),
-          // create a tab bar view here
-          buildReviewerDashboardContent(),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.white,
+        elevation: 2,
+        title: const Text("Reviewer Dashboard"),
+        automaticallyImplyLeading: false,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: () {
+              getData();
+            },
+          ),
+          // reviewer profile summary button
+          IconButton(
+            icon: const Icon(Icons.person),
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    title: const Text("Reviewer Profile Summary"),
+                    content: buildProfileSummary(),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: const Text("Close"),
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+          ),
+          const SizedBox(width: 10),
         ],
       ),
+      body: isLoading ? const LoadingWidget() : buildReviewerDashboardContent(),
     );
   }
 }

@@ -131,6 +131,7 @@ class ProgramProvider extends ChangeNotifier {
   updateProgramTimeline(ProgramTimelineModel programTimeline) {
     int index = _programTimelines!
         .indexWhere((element) => element.id == programTimeline.id);
+
     _programTimelines![index] = programTimeline;
     notifyListeners();
   }
